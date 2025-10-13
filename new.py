@@ -2,6 +2,7 @@
 import os
 import sys
 import shutil
+import subprocess
 from pathlib import Path
 
 
@@ -48,6 +49,15 @@ def main():
     
     print(f"✓ Created project: {project_name}")
     print(f"✓ Copied commands to .claude/ and .cursor/")
+    
+    # Open the project in a new Cursor window
+    try:
+        subprocess.run(["cursor", "-n", str(new_project_dir)], check=True)
+        print(f"✓ Opened project in Cursor")
+    except subprocess.CalledProcessError:
+        print(f"⚠ Warning: Failed to open Cursor. Please open {new_project_dir} manually.")
+    except FileNotFoundError:
+        print(f"⚠ Warning: 'cursor' command not found. Please open {new_project_dir} manually.")
 
 
 if __name__ == "__main__":
