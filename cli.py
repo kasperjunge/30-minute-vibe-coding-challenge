@@ -9,6 +9,7 @@ from typing import Optional
 import typer
 from rich.console import Console
 from rich.table import Table
+from rich.prompt import Prompt
 
 app = typer.Typer(
     name="vibe",
@@ -49,6 +50,19 @@ def list_available_templates() -> list[str]:
     return [d.name for d in templates_dir.iterdir() if d.is_dir()]
 
 
+def get_projects_dir() -> Path:
+    """Get the projects directory path."""
+    return Path(__file__).parent / "projects"
+
+
+def list_existing_projects() -> list[str]:
+    """List existing projects."""
+    projects_dir = get_projects_dir()
+    if not projects_dir.exists():
+        return []
+    return [d.name for d in projects_dir.iterdir() if d.is_dir()]
+
+
 @app.command("list")
 def list_templates():
     """📋 List all available project templates."""
@@ -74,7 +88,7 @@ def create_project(
         None,
         "--template",
         "-t",
-        help="Template to use (optional)",
+        help="Template to use (optional, will prompt if not provided)",
         autocompletion=list_available_templates,
     ),
     no_open: bool = typer.Option(
@@ -103,6 +117,25 @@ def create_project(
     if new_project_dir.exists():
         console.print(f"[red]✗[/red] Project '{project_name}' already exists in projects/")
         raise typer.Exit(1)
+    
+    # Interactive template selection if not provided
+    if template is None:
+        available_templates = list_available_templates()
+        
+        if available_templates:
+            console.print("\n[bold cyan]Available templates:[/bold cyan]")
+            console.print("[dim]0.[/dim] No template (empty project)")
+            for idx, tmpl in enumerate(available_templates, 1):
+                console.print(f"[dim]{idx}.[/dim] {tmpl}")
+            
+            choice = Prompt.ask(
+                "\n[bold]Choose a template[/bold]",
+                choices=[str(i) for i in range(len(available_templates) + 1)],
+                default="0"
+            )
+            
+            if choice != "0":
+                template = available_templates[int(choice) - 1]
     
     # Create the new project directory
     new_project_dir.mkdir(parents=True, exist_ok=True)
@@ -158,6 +191,52 @@ def create_project(
     console.print(f"\n[bold green]🎵 Happy coding![/bold green]")
 
 
+@app.command("open")
+def open_project(
+    project_name: Optional[str] = typer.Argument(
+        None,
+        help="Name of the project to open (optional, will list projects if not provided)"
+    ),
+):
+    """📂 Open an existing project in Cursor."""
+    projects_dir = get_projects_dir()
+    
+    # If no project name provided, list all projects
+    if project_name is None:
+        existing_projects = list_existing_projects()
+        
+        if not existing_projects:
+            console.print("[yellow]No projects found in projects/[/yellow]")
+            console.print("[dim]Create a new project with:[/dim] [cyan]vibe new <project-name>[/cyan]")
+            raise typer.Exit(0)
+        
+        table = Table(title="Existing Projects", show_header=True)
+        table.add_column("Project Name", style="cyan")
+        
+        for project in existing_projects:
+            table.add_row(project)
+        
+        console.print(table)
+        console.print("\n[dim]Open a project with:[/dim] [cyan]vibe open <project-name>[/cyan]")
+        raise typer.Exit(0)
+    
+    # Open specific project
+    project_dir = projects_dir / project_name
+    
+    if not project_dir.exists():
+        console.print(f"[red]✗[/red] Project '{project_name}' not found in projects/")
+        console.print("[yellow]💡 Use 'vibe open' to see all projects[/yellow]")
+        raise typer.Exit(1)
+    
+    try:
+        subprocess.run(["cursor", "-n", str(project_dir)], check=True)
+        console.print(f"[green]✓[/green] Opened project [cyan]{project_name}[/cyan] in Cursor")
+    except subprocess.CalledProcessError:
+        console.print(f"[yellow]⚠[/yellow] Warning: Failed to open Cursor. Please open {project_dir} manually.")
+    except FileNotFoundError:
+        console.print(f"[yellow]⚠[/yellow] Warning: 'cursor' command not found. Please open {project_dir} manually.")
+
+
 @app.callback(invoke_without_command=True)
 def main(
     ctx: typer.Context,
@@ -174,9 +253,7 @@ def main(
         raise typer.Exit()
     
     if ctx.invoked_subcommand is None:
-        console.print("[yellow]Use 'vibe new <project-name>' to create a project[/yellow]")
-        console.print("[yellow]Use 'vibe list' to see available templates[/yellow]")
-        console.print("[yellow]Use 'vibe --help' for more information[/yellow]")
+        console.print(ctx.get_help())
 
 
 if __name__ == "__main__":
