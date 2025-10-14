@@ -18,6 +18,21 @@ app = typer.Typer(
 )
 console = Console()
 
+ASCII_ART = r"""
+[bold magenta] ____ ____ _________ ____ ____ ____ ____ ____ ____           
+||3 |||0 |||       |||M |||i |||n |||u |||t |||e ||          
+||__|||__|||_______|||__|||__|||__|||__|||__|||__||          
+|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|[/bold magenta]          
+[bold cyan] ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ 
+||V |||i |||b |||e |||       |||C |||o |||d |||i |||n |||g ||
+||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__||
+|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|[/bold cyan]
+[bold yellow] ____ ____ ____ ____ ____ ____ ____ ____ ____                
+||C |||h |||a |||l |||l |||e |||n |||g |||e ||               
+||__|||__|||__|||__|||__|||__|||__|||__|||__||               
+|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|[/bold yellow]               
+"""
+
 
 def copy_tree(src: Path, dst: Path, ignore_patterns: list[str] | None = None) -> None:
     """Copy directory tree, excluding specified patterns."""
@@ -253,6 +268,7 @@ def main(
         raise typer.Exit()
     
     if ctx.invoked_subcommand is None:
+        console.print(ASCII_ART)
         console.print(ctx.get_help())
 
 
