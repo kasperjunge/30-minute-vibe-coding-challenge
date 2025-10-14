@@ -1,68 +1,98 @@
-# 30 Minute Vibe Coding Challenge Projects
+# 30 Minute Vibe Coding Challenge Projekter
 
-This repository contains projects created during the **30 Minute Vibe Coding Challenge** on [Kasper Junge's YouTube channel](https://www.youtube.com/@KasperJunge).
+Dette repository indeholder projekter skabt under **30 Minute Vibe Coding Challenge** på [Kasper Junges YouTube-kanal](https://www.youtube.com/@KasperJunge).
 
-## About the Challenge
+## Om Udfordringen
 
-The 30 Minute Vibe Coding Challenge is a series where projects are built from scratch in just 30 minutes, showcasing rapid prototyping and AI-assisted development techniques.
+30 Minute Vibe Coding Challenge er en serie, hvor projekter bygges fra bunden på kun 30 minutter, der demonstrerer hurtig prototyping og AI-assisteret udviklingsteknikker.
 
-## How It Works
+## Sådan Virker Det
 
-This repository provides a simple script to bootstrap new projects with pre-configured command templates for AI assistants (Claude and Cursor).
+Dette repository tilbyder et simpelt script til at bootstrap nye projekter med prækonfigurerede kommandoskabeloner til AI-assistenter (Claude og Cursor).
 
-### Structure
+### Struktur
 
-- `commands/` - Contains template markdown files that define AI assistant commands
-- `templates/` - Project templates that can be used to initialize new projects
-- `projects/` - Where new projects are created
-- `new.py` - Script to create new projects
+- `context-engineering/` - Context engineering filer til AI-assistenter
+  - `commands/` - Template markdown filer der definerer AI-assistent kommandoer
+  - `rules/` - Tilpassede regler for AI-adfærd
+- `templates/` - Projekt skabeloner der kan bruges til at initialisere nye projekter
+- `projects/` - Her oprettes nye projekter
+- `cli.py` - CLI script til at oprette nye projekter
 
-### Usage
+### Opsætning
 
-Create a new blank project:
-
-```bash
-python new.py <project-name>
-```
-
-Create a new project from a template:
+Installer først dependencies med `uv`:
 
 ```bash
-python new.py <project-name> --template <template-name>
+uv sync
 ```
 
-List available templates:
+### Brug
+
+CLI'en tilbyder to hovedkommandoer:
+
+**Opret et nyt projekt:**
 
 ```bash
-python new.py --list-templates
+uv run vibe new <projekt-navn>
 ```
 
-This will:
-1. Create a new directory at `projects/<project-name>/`
-2. Copy template files if `--template` is specified
-3. Create `.claude/commands/` and `.cursor/commands/` subdirectories
-4. Copy all command files from `commands/` into both subdirectories
-5. Open the project in Cursor
+**Opret et nyt projekt fra en skabelon:**
 
-### Examples
-
-Create a blank project:
 ```bash
-python new.py my-awesome-app
+uv run vibe new <projekt-navn> --template <skabelon-navn>
 ```
 
-Create a project from the FastAPI template:
+**Vis tilgængelige skabeloner:**
+
 ```bash
-python new.py my-awesome-app --template template-fastapi-sqlite-jinja2
+uv run vibe list
 ```
 
-List available templates:
+**Yderligere muligheder:**
+
 ```bash
-python new.py --list-templates
+# Åbn ikke projektet i Cursor automatisk
+uv run vibe new <projekt-navn> --no-open
+
+# Vis version
+uv run vibe --version
+
+# Vis hjælp
+uv run vibe --help
 ```
 
-### Available Templates
+Dette vil:
+1. Oprette en ny mappe under `projects/<projekt-navn>/`
+2. Kopiere skabelonfiler hvis `--template` er angivet
+3. Oprette `.claude/commands/` og `.cursor/commands/` undermapper
+4. Kopiere alle kommandofiler fra `context-engineering/commands/` til begge undermapper
+5. Åbne projektet i Cursor (medmindre `--no-open` er angivet)
 
-- **template-fastapi-sqlite-jinja2** - FastAPI web app with SQLite database and Jinja2 templates
+### Eksempler
 
-Now you can start your 30-minute coding challenge with AI assistant commands ready to go!
+Opret et tomt projekt:
+```bash
+uv run vibe new min-fede-app
+```
+
+Opret et projekt fra FastAPI skabelonen:
+```bash
+uv run vibe new min-fede-app --template fastapi-sqlite-jinja2
+```
+
+Vis tilgængelige skabeloner:
+```bash
+uv run vibe list
+```
+
+Opret et projekt uden at åbne det i Cursor:
+```bash
+uv run vibe new min-fede-app --no-open
+```
+
+### Tilgængelige Skabeloner
+
+- **fastapi-sqlite-jinja2** - FastAPI web app med SQLite database og Jinja2 templates
+
+Nu kan du starte din 30-minutters kodningsudfordring med AI-assistent kommandoer klar til brug! 🎵
