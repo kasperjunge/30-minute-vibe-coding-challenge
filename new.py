@@ -34,21 +34,21 @@ def main():
     # Create the new project directory
     new_project_dir.mkdir(parents=True, exist_ok=True)
     
-    # Create .claude and .cursor directories
-    claude_dir = new_project_dir / ".claude"
-    cursor_dir = new_project_dir / ".cursor"
+    # Create .claude/commands and .cursor/commands directories
+    claude_commands_dir = new_project_dir / ".claude" / "commands"
+    cursor_commands_dir = new_project_dir / ".cursor" / "commands"
     
-    claude_dir.mkdir(exist_ok=True)
-    cursor_dir.mkdir(exist_ok=True)
+    claude_commands_dir.mkdir(parents=True, exist_ok=True)
+    cursor_commands_dir.mkdir(parents=True, exist_ok=True)
     
     # Copy commands into both directories
     for item in commands_dir.iterdir():
         if item.is_file():
-            shutil.copy2(item, claude_dir / item.name)
-            shutil.copy2(item, cursor_dir / item.name)
+            shutil.copy2(item, claude_commands_dir / item.name)
+            shutil.copy2(item, cursor_commands_dir / item.name)
     
     print(f"✓ Created project: {project_name}")
-    print(f"✓ Copied commands to .claude/ and .cursor/")
+    print(f"✓ Copied commands to .claude/commands/ and .cursor/commands/")
     
     # Open the project in a new Cursor window
     try:
