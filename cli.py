@@ -130,13 +130,20 @@ def create_project(
     claude_commands_dir.mkdir(parents=True, exist_ok=True)
     cursor_commands_dir.mkdir(parents=True, exist_ok=True)
     
-    # Copy commands into both directories
-    for item in commands_dir.iterdir():
-        if item.is_file():
-            shutil.copy2(item, claude_commands_dir / item.name)
-            shutil.copy2(item, cursor_commands_dir / item.name)
+    # Copy command workflows (sdd/ and rpi/) into both directories
+    for workflow_dir in ['sdd', 'rpi']:
+        src_workflow = commands_dir / workflow_dir
+        if src_workflow.exists():
+            claude_workflow = claude_commands_dir / workflow_dir
+            cursor_workflow = cursor_commands_dir / workflow_dir
+            
+            claude_workflow.mkdir(parents=True, exist_ok=True)
+            cursor_workflow.mkdir(parents=True, exist_ok=True)
+            
+            copy_tree(src_workflow, claude_workflow)
+            copy_tree(src_workflow, cursor_workflow)
     
-    console.print("[green]✓[/green] Copied commands to .claude/commands/ and .cursor/commands/")
+    console.print("[green]✓[/green] Copied commands (sdd + rpi workflows) to .claude/commands/ and .cursor/commands/")
     
     # Open the project in a new Cursor window
     if not no_open:
