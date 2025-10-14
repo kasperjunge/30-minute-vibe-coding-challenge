@@ -13,42 +13,56 @@ This repository provides a simple script to bootstrap new projects with pre-conf
 ### Structure
 
 - `commands/` - Contains template markdown files that define AI assistant commands
+- `templates/` - Project templates that can be used to initialize new projects
 - `projects/` - Where new projects are created
 - `new.py` - Script to create new projects
 
 ### Usage
 
-Create a new project:
+Create a new blank project:
 
 ```bash
 python new.py <project-name>
 ```
 
+Create a new project from a template:
+
+```bash
+python new.py <project-name> --template <template-name>
+```
+
+List available templates:
+
+```bash
+python new.py --list-templates
+```
+
 This will:
 1. Create a new directory at `projects/<project-name>/`
-2. Create `.claude/` and `.cursor/` subdirectories
-3. Copy all files from `commands/` into both subdirectories
+2. Copy template files if `--template` is specified
+3. Create `.claude/commands/` and `.cursor/commands/` subdirectories
+4. Copy all command files from `commands/` into both subdirectories
+5. Open the project in Cursor
 
-### Example
+### Examples
 
+Create a blank project:
 ```bash
 python new.py my-awesome-app
 ```
 
-Creates:
+Create a project from the FastAPI template:
+```bash
+python new.py my-awesome-app --template template-fastapi-sqlite-jinja2
 ```
-projects/
-  my-awesome-app/
-    .claude/
-      clarify_design.md
-      clarify_requirements.md
-      create_plan.md
-      implement_plan.md
-    .cursor/
-      clarify_design.md
-      clarify_requirements.md
-      create_plan.md
-      implement_plan.md
+
+List available templates:
+```bash
+python new.py --list-templates
 ```
+
+### Available Templates
+
+- **template-fastapi-sqlite-jinja2** - FastAPI web app with SQLite database and Jinja2 templates
 
 Now you can start your 30-minute coding challenge with AI assistant commands ready to go!

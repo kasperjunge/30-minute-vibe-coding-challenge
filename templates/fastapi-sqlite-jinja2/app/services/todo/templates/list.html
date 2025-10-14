@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}My Todos - {{ settings.app_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Header with New button -->
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-3xl font-bold text-gray-800">My Todos</h2>
+        <a href="/todos/new" 
+           class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+            + New Todo
+        </a>
+    </div>
+    
+    <!-- Todos list -->
+    {% if todos %}
+        <div class="space-y-4">
+            {% for todo in todos %}
+            <div class="bg-white rounded-lg shadow-md p-6 {% if todo.completed %}opacity-75{% endif %}">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start space-x-4 flex-grow">
+                        <!-- Checkbox for completion -->
+                        <form method="post" action="/todos/{{ todo.id }}/toggle" class="mt-1">
+                            <input type="checkbox" 
+                                   {% if todo.completed %}checked{% endif %}
+                                   onchange="this.form.submit()"
+                                   class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500">
+                        </form>
+                        
+                        <!-- Todo content -->
+                        <div class="flex-grow">
+                            <h3 class="text-xl font-semibold {% if todo.completed %}line-through text-gray-500{% else %}text-gray-800{% endif %}">
+                                {{ todo.title }}
+                            </h3>
+                            {% if todo.description %}
+                            <p class="text-gray-600 mt-2 {% if todo.completed %}line-through{% endif %}">
+                                {{ todo.description }}
+                            </p>
+                            {% endif %}
+                            <p class="text-sm text-gray-400 mt-2">
+                                Created: {{ todo.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Action buttons -->
+                    <div class="flex space-x-2 ml-4">
+                        <a href="/todos/{{ todo.id }}/edit" 
+                           class="text-blue-600 hover:text-blue-800 px-3 py-1 border border-blue-600 rounded">
+                            Edit
+                        </a>
+                        <form method="post" action="/todos/{{ todo.id }}/delete" class="inline"
+                              onsubmit="return confirm('Delete this todo?');">
+                            <button type="submit" 
+                                    class="text-red-600 hover:text-red-800 px-3 py-1 border border-red-600 rounded">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Empty state -->
+        <div class="bg-white rounded-lg shadow-md p-12 text-center">
+            <div class="text-6xl mb-4">📝</div>
+            <h3 class="text-2xl font-semibold text-gray-800 mb-2">No todos yet</h3>
+            <p class="text-gray-600 mb-6">Create your first todo to get started!</p>
+            <a href="/todos/new" 
+               class="inline-block bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition">
+                + Create First Todo
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

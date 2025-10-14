@@ -1,0 +1,10 @@
+.env
+*.sqlite
+*.sqlite-journal
+.venv/
+env/
+venv/
+.Python
+.pytest_cache/
+.ruff_cache/
+.ruff_cache/

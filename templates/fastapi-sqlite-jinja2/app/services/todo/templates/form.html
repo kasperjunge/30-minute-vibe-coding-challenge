@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if todo %}Edit Todo{% else %}New Todo{% endif %} - {{ settings.app_name }}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">
+            {% if todo %}Edit Todo{% else %}New Todo{% endif %}
+        </h2>
+        
+        <form method="post" action="{{ action }}">
+            <!-- Title field -->
+            <div class="mb-6">
+                <label for="title" class="block text-gray-700 font-semibold mb-2">
+                    Title <span class="text-red-500">*</span>
+                </label>
+                <input type="text" 
+                       id="title" 
+                       name="title" 
+                       value="{% if todo %}{{ todo.title }}{% endif %}"
+                       required
+                       class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="Enter todo title">
+            </div>
+            
+            <!-- Description field -->
+            <div class="mb-6">
+                <label for="description" class="block text-gray-700 font-semibold mb-2">
+                    Description
+                </label>
+                <textarea id="description" 
+                          name="description" 
+                          rows="4"
+                          class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Optional description">{% if todo and todo.description %}{{ todo.description }}{% endif %}</textarea>
+            </div>
+            
+            <!-- Completed checkbox (only in edit mode) -->
+            {% if todo %}
+            <div class="mb-6">
+                <label class="flex items-center">
+                    <input type="checkbox" 
+                           name="completed" 
+                           value="true"
+                           {% if todo.completed %}checked{% endif %}
+                           class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500">
+                    <span class="ml-2 text-gray-700">Mark as completed</span>
+                </label>
+            </div>
+            {% endif %}
+            
+            <!-- Buttons -->
+            <div class="flex space-x-4">
+                <button type="submit" 
+                        class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+                    Save
+                </button>
+                <a href="/todos" 
+                   class="bg-gray-200 text-gray-700 px-6 py-2 rounded hover:bg-gray-300 transition inline-block">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
