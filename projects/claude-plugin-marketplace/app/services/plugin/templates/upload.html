@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Plugin - Plugin Marketplace{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6">Upload Plugin</h1>
+    
+    <!-- Requirements Section -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+        <h2 class="text-lg font-semibold mb-3">Plugin Requirements:</h2>
+        <ul class="list-disc list-inside space-y-2 text-sm">
+            <li>Must be a valid ZIP file</li>
+            <li>Must contain <code class="bg-blue-100 px-1 rounded">.claude-plugin/plugin.json</code></li>
+            <li>plugin.json must include: name, version (x.y.z format), and description</li>
+            <li>No executable files (.exe, .sh, .bat, .cmd, .dll, .so)</li>
+            <li>Version must be higher than existing versions (for updates)</li>
+        </ul>
+    </div>
+    
+    <!-- Error Display -->
+    {% if error %}
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <p class="text-red-800">{{ error }}</p>
+    </div>
+    {% endif %}
+    
+    <!-- Success Message -->
+    {% if request.query_params.get('success') %}
+    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+        <p class="text-green-800">Plugin uploaded successfully!</p>
+    </div>
+    {% endif %}
+    
+    <!-- Upload Form -->
+    <form method="post" enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-6">
+        <div class="mb-6">
+            <label for="file" class="block text-sm font-medium text-gray-700 mb-2">
+                Plugin ZIP File *
+            </label>
+            <input 
+                type="file" 
+                name="file" 
+                id="file" 
+                accept=".zip"
+                required
+                class="block w-full text-sm text-gray-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-blue-50 file:text-blue-700
+                    hover:file:bg-blue-100"
+            />
+            <p class="text-xs text-gray-500 mt-1">Upload your plugin as a ZIP archive</p>
+        </div>
+        
+        <div class="mb-6">
+            <label for="plugin_name" class="block text-sm font-medium text-gray-700 mb-2">
+                Plugin Name (optional)
+            </label>
+            <input 
+                type="text" 
+                name="plugin_name" 
+                id="plugin_name"
+                placeholder="Leave empty to use name from plugin.json"
+                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            />
+            <p class="text-xs text-gray-500 mt-1">Override the plugin name from plugin.json (optional)</p>
+        </div>
+        
+        <div class="flex items-center justify-between">
+            <a href="/" class="text-blue-600 hover:text-blue-800">Cancel</a>
+            <button 
+                type="submit"
+                class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+                Upload Plugin
+            </button>
+        </div>
+    </form>
+    
+    <!-- Help Section -->
+    <div class="mt-8 bg-gray-50 rounded-lg p-6">
+        <h3 class="font-semibold mb-2">Need help?</h3>
+        <p class="text-sm text-gray-600">
+            Make sure your plugin follows the Claude Code plugin structure. 
+            Your ZIP should contain a <code class="bg-gray-200 px-1 rounded">.claude-plugin/plugin.json</code> file at the root.
+        </p>
+        <div class="mt-4 text-sm">
+            <p class="font-medium mb-2">Example plugin.json:</p>
+            <pre class="bg-gray-800 text-gray-100 p-3 rounded overflow-x-auto"><code>{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "description": "My awesome plugin",
+  "author": "Your Name"
+}</code></pre>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

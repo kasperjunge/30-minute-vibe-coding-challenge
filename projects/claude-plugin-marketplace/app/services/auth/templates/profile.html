@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}@{{ profile_user.username }} - Plugin Marketplace{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-12 px-4">
+    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold mb-2">@{{ profile_user.username }}</h1>
+            <p class="text-gray-600">Member since {{ profile_user.created_at.strftime('%B %d, %Y') }}</p>
+        </div>
+        
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold mb-4">Published Plugins</h2>
+            
+            {% if plugins %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for plugin_data in plugins %}
+                <div class="border rounded p-4 hover:shadow-lg transition">
+                    <h3 class="text-xl font-bold mb-2">
+                        <a href="/plugins/@{{ profile_user.username }}/{{ plugin_data.plugin.name }}" class="text-blue-600 hover:text-blue-800">
+                            {{ plugin_data.plugin.display_name }}
+                        </a>
+                    </h3>
+                    <p class="text-gray-600 mb-2">{{ plugin_data.plugin.description }}</p>
+                    {% if plugin_data.latest_version %}
+                    <p class="text-sm text-gray-500">
+                        Latest version: {{ plugin_data.latest_version.version }}
+                    </p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-600">This user hasn't published any plugins yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

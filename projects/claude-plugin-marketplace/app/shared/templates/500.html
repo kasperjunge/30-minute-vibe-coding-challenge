@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - FastAPI Template{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto text-center">
+    <div class="bg-white rounded-lg shadow-md p-12">
+        <div class="text-6xl mb-4">⚠️</div>
+        <h2 class="text-4xl font-bold text-gray-800 mb-4">
+            500 - Server Error
+        </h2>
+        <p class="text-gray-600 mb-8">
+            Something went wrong on our end. We're working to fix it.
+        </p>
+        <a href="/" 
+           class="inline-block bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition">
+            ← Back to Home
+        </a>
+    </div>
+</div>
+{% endblock %}
+

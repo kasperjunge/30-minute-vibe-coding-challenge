@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FastAPI Template{% endblock %}</title>
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/custom.css') }}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-gray-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <h1 class="text-2xl font-bold">
+                    <a href="/" class="hover:text-gray-300">Plugin Marketplace</a>
+                </h1>
+                <nav>
+                    <ul class="flex space-x-6 items-center">
+                        {% if request.state.user %}
+                            <li><a href="/plugins/upload" class="hover:text-gray-300">Upload Plugin</a></li>
+                            <li><a href="/plugins/my-plugins" class="hover:text-gray-300">My Plugins</a></li>
+                            {% if request.state.user.is_admin %}
+                                <li><a href="/admin/reports" class="hover:text-gray-300 font-semibold">Admin</a></li>
+                            {% endif %}
+                            <li><a href="/auth/users/@{{ request.state.user.username }}" class="hover:text-gray-300">@{{ request.state.user.username }}</a></li>
+                            <li>
+                                <form method="post" action="/auth/logout" class="inline">
+                                    <button type="submit" class="hover:text-gray-300">Logout</button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li><a href="/auth/login" class="hover:text-gray-300">Login</a></li>
+                            <li><a href="/auth/register" class="hover:text-gray-300">Register</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Flash messages -->
+    {% if messages %}
+    <div class="container mx-auto px-4 py-4">
+        {% for message in messages %}
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Main content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <p>Claude Plugin Marketplace</p>
+            <p class="text-sm text-gray-400 mt-2">Community-driven marketplace for Claude Code plugins</p>
+        </div>
+    </footer>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
+
