@@ -9,6 +9,12 @@ dependencies = [
     "rich>=13.0.0",
 ]
 
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "pytest-mock>=3.14.0",
+]
+
 [project.scripts]
 vibe = "cli:app"
 
