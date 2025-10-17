@@ -26,8 +26,8 @@ Please provide:
 
 I'll analyze this information and work with you to create a comprehensive plan.
 
-Tip: You can also invoke this command with a ticket file directly: `/create_plan thoughts/allison/tickets/eng_1234.md`
-For deeper analysis, try: `/create_plan think deeply about thoughts/allison/tickets/eng_1234.md`
+Tip: You can also invoke this command with a requirements file directly: `/create_plan tasks/001-2025-01-15-feature-name/requirements.md`
+For deeper analysis, try: `/create_plan think deeply about tasks/001-2025-01-15-feature-name/requirements.md`
 ```
 
 Then wait for the user's input.
@@ -37,8 +37,8 @@ Then wait for the user's input.
 ### Step 1: Context Gathering & Initial Analysis
 
 1. **Read all mentioned files immediately and FULLY**:
-   - Ticket files (e.g., `thoughts/allison/tickets/eng_1234.md`)
-   - Research documents
+   - Requirements files (e.g., `tasks/001-2025-01-15-feature-name/requirements.md`)
+   - Research documents from the task directory
    - Related implementation plans
    - Any JSON/data files mentioned
    - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
@@ -48,10 +48,8 @@ Then wait for the user's input.
 2. **Spawn initial research tasks to gather context**:
    Before asking the user any questions, use specialized agents to research in parallel:
 
-   - Use the **codebase-locator** agent to find all files related to the ticket/task
+   - Use the **codebase-locator** agent to find all files related to the task
    - Use the **codebase-analyzer** agent to understand how the current implementation works
-   - If relevant, use the **thoughts-locator** agent to find any existing thoughts documents about this feature
-   - If a Linear ticket is mentioned, use the **linear-ticket-reader** agent to get full details
 
    These agents will:
    - Find relevant source files, configs, and tests
@@ -65,14 +63,14 @@ Then wait for the user's input.
    - This ensures you have complete understanding before proceeding
 
 4. **Analyze and verify understanding**:
-   - Cross-reference the ticket requirements with actual code
+   - Cross-reference the task requirements with actual code
    - Identify any discrepancies or misunderstandings
    - Note assumptions that need verification
    - Determine true scope based on codebase reality
 
 5. **Present informed understanding and focused questions**:
    ```
-   Based on the ticket and my research of the codebase, I understand we need to [accurate summary].
+   Based on the requirements and my research of the codebase, I understand we need to [accurate summary].
 
    I've found that:
    - [Current implementation detail with file:line reference]
@@ -108,12 +106,8 @@ After getting initial clarifications:
    - **codebase-analyzer** - To understand implementation details (e.g., "analyze how [system] works")
    - **codebase-pattern-finder** - To find similar features we can model after
 
-   **For historical context:**
-   - **thoughts-locator** - To find any research, plans, or decisions about this area
-   - **thoughts-analyzer** - To extract key insights from the most relevant documents
-
-   **For related tickets:**
-   - **linear-searcher** - To find similar issues or past implementations
+   **For web research (if needed):**
+   - **web-search-researcher** - To find external documentation, tutorials, or best practices
 
    Each agent knows how to:
    - Find the right files and code patterns
@@ -168,15 +162,19 @@ Once aligned on approach:
 
 After structure approval:
 
-1. **Write the plan** to `thoughts/shared/plans/YYYY-MM-DD-ENG-XXXX-description.md`
-   - Format: `YYYY-MM-DD-ENG-XXXX-description.md` where:
-     - YYYY-MM-DD is today's date
-     - ENG-XXXX is the ticket number (omit if no ticket)
-     - description is a brief kebab-case description
-   - Examples:
-     - With ticket: `2025-01-08-ENG-1478-parent-child-tracking.md`
-     - Without ticket: `2025-01-08-improve-error-handling.md`
-2. **Use this template structure**:
+1. **Determine the task directory**:
+   - If working on an existing task, write to that task's directory: `tasks/NNN-YYYY-MM-DD-description/plan.md`
+   - If starting a new task, create a new numbered directory:
+     - Check what task numbers already exist in `tasks/`
+     - Use the next sequential number (e.g., if tasks/003-... exists, create tasks/004-...)
+     - Format: `tasks/NNN-YYYY-MM-DD-description/plan.md` where:
+       - NNN is a zero-padded 3-digit number (001, 002, etc.)
+       - YYYY-MM-DD is today's date
+       - description is a brief kebab-case description
+   - Example: `tasks/005-2025-01-15-add-authentication/plan.md`
+
+2. **Write the plan** to the task directory
+3. **Use this template structure**:
 
 ````markdown
 # [Feature/Task Name] Implementation Plan
@@ -224,11 +222,11 @@ After structure approval:
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] Migration applies cleanly: `make migrate`
-- [ ] Unit tests pass: `make test-component`
-- [ ] Type checking passes: `npm run typecheck`
-- [ ] Linting passes: `make lint`
-- [ ] Integration tests pass: `make test-integration`
+- [ ] Migration applies cleanly: `[project-specific command, e.g., python manage.py migrate]`
+- [ ] Unit tests pass: `[project-specific command, e.g., npm test, pytest tests/unit/]`
+- [ ] Type checking passes: `[if applicable, e.g., npm run typecheck, mypy src/]`
+- [ ] Linting passes: `[project-specific command, e.g., npm run lint, flake8 src/]`
+- [ ] Integration tests pass: `[project-specific command, e.g., npm run test:integration]`
 
 #### Manual Verification:
 - [ ] Feature works as expected when tested via UI
@@ -270,21 +268,17 @@ After structure approval:
 
 ## References
 
-- Original ticket: `thoughts/allison/tickets/eng_XXXX.md`
-- Related research: `thoughts/shared/research/[relevant].md`
+- Original requirements: `tasks/NNN-YYYY-MM-DD-description/requirements.md` (if applicable)
+- Related research: `tasks/NNN-YYYY-MM-DD-description/research.md` (if applicable)
 - Similar implementation: `[file:line]`
 ````
 
-### Step 5: Sync and Review
+### Step 5: Review and Iterate
 
-1. **Sync the thoughts directory**:
-   - Run `humanlayer thoughts sync` to sync the newly created plan
-   - This ensures the plan is properly indexed and available
-
-2. **Present the draft plan location**:
+1. **Present the draft plan location**:
    ```
    I've created the initial implementation plan at:
-   `thoughts/shared/plans/YYYY-MM-DD-ENG-XXXX-description.md`
+   `tasks/NNN-YYYY-MM-DD-description/plan.md`
 
    Please review it and let me know:
    - Are the phases properly scoped?
@@ -293,14 +287,13 @@ After structure approval:
    - Missing edge cases or considerations?
    ```
 
-3. **Iterate based on feedback** - be ready to:
+2. **Iterate based on feedback** - be ready to:
    - Add missing phases
    - Adjust technical approach
    - Clarify success criteria (both automated and manual)
    - Add/remove scope items
-   - After making changes, run `humanlayer thoughts sync` again
 
-4. **Continue refining** until the user is satisfied
+3. **Continue refining** until the user is satisfied
 
 ## Important Guidelines
 
@@ -321,7 +314,7 @@ After structure approval:
    - Research actual code patterns using parallel sub-tasks
    - Include specific file paths and line numbers
    - Write measurable success criteria with clear automated vs manual distinction
-   - automated steps should use `make` whenever possible - for example `make -C humanlayer-wui check` instead of `cd humanlayer-wui && bun run fmt`
+   - Use the project's standard testing/verification commands in success criteria
 
 4. **Be Practical**:
    - Focus on incremental, testable changes
@@ -362,9 +355,9 @@ After structure approval:
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] Database migration runs successfully: `make migrate`
-- [ ] All unit tests pass: `go test ./...`
-- [ ] No linting errors: `golangci-lint run`
+- [ ] Database migration runs successfully: `python manage.py migrate`
+- [ ] All unit tests pass: `pytest tests/`
+- [ ] No linting errors: `flake8 src/`
 - [ ] API endpoint returns 200: `curl localhost:8080/api/new-endpoint`
 
 #### Manual Verification:
@@ -408,9 +401,8 @@ When spawning research sub-tasks:
    - What information to extract
    - Expected output format
 4. **Be EXTREMELY specific about directories**:
-   - If the ticket mentions "WUI", specify `humanlayer-wui/` directory
-   - If it mentions "daemon", specify `hld/` directory
-   - Never use generic terms like "UI" when you mean "WUI"
+   - If the requirements mention specific subsystems, specify those directories
+   - Be explicit about directory paths in your research prompts
    - Include the full path context in your prompts
 5. **Specify read-only tools** to use
 6. **Request specific file:line references** in responses
@@ -437,12 +429,12 @@ tasks = [
 User: /implementation_plan
 Assistant: I'll help you create a detailed implementation plan...
 
-User: We need to add parent-child tracking for Claude sub-tasks. See thoughts/allison/tickets/eng_1478.md
-Assistant: Let me read that ticket file completely first...
+User: We need to add authentication to the API. See tasks/003-2025-01-10-api-auth/requirements.md
+Assistant: Let me read that requirements file completely first...
 
 [Reads file fully]
 
-Based on the ticket, I understand we need to track parent-child relationships for Claude sub-task events in the hld daemon. Before I start planning, I have some questions...
+Based on the requirements, I understand we need to add JWT-based authentication to the API endpoints. Before I start planning, I have some questions...
 
 [Interactive process continues...]
 ```

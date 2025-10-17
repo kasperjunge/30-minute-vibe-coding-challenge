@@ -50,17 +50,9 @@ Then wait for the user's research query.
 
    **IMPORTANT**: All agents are documentarians, not critics. They will describe what exists without suggesting improvements or identifying issues.
 
-   **For thoughts directory:**
-   - Use the **thoughts-locator** agent to discover what documents exist about the topic
-   - Use the **thoughts-analyzer** agent to extract key insights from specific documents (only the most relevant ones)
-
    **For web research (only if user explicitly asks):**
    - Use the **web-search-researcher** agent for external documentation and resources
    - IF you use web-research agents, instruct them to return LINKS with their findings, and please INCLUDE those links in your final report
-
-   **For Linear tickets (if relevant):**
-   - Use the **linear-ticket-reader** agent to get full details of a specific ticket
-   - Use the **linear-searcher** agent to find related tickets or historical context
 
    The key is to use these agents intelligently:
    - Start with locator agents to find what exists
@@ -72,33 +64,32 @@ Then wait for the user's research query.
 
 4. **Wait for all sub-agents to complete and synthesize findings:**
    - IMPORTANT: Wait for ALL sub-agent tasks to complete before proceeding
-   - Compile all sub-agent results (both codebase and thoughts findings)
-   - Prioritize live codebase findings as primary source of truth
-   - Use thoughts/ findings as supplementary historical context
+   - Compile all sub-agent results
    - Connect findings across different components
    - Include specific file paths and line numbers for reference
-   - Verify all thoughts/ paths are correct (e.g., thoughts/allison/ not thoughts/shared/ for personal files)
    - Highlight patterns, connections, and architectural decisions
    - Answer the user's specific questions with concrete evidence
 
-5. **Gather metadata for the research document:**
-   - Run the `hack/spec_metadata.sh` script to generate all relevant metadata
-   - Filename: `thoughts/shared/research/YYYY-MM-DD-ENG-XXXX-description.md`
-     - Format: `YYYY-MM-DD-ENG-XXXX-description.md` where:
-       - YYYY-MM-DD is today's date
-       - ENG-XXXX is the ticket number (omit if no ticket)
-       - description is a brief kebab-case description of the research topic
-     - Examples:
-       - With ticket: `2025-01-08-ENG-1478-parent-child-tracking.md`
-       - Without ticket: `2025-01-08-authentication-flow.md`
+5. **Gather metadata and determine research document location:**
+   - Run the `.claude/hack/spec_metadata.sh` script to generate all relevant metadata
+   - Determine task directory:
+     - If research is for an existing task, write to that task's directory: `tasks/NNN-YYYY-MM-DD-description/research.md`
+     - If starting new research (not tied to existing task), create a new task directory:
+       - Check what task numbers already exist in `tasks/`
+       - Use the next sequential number (e.g., if tasks/003-... exists, create tasks/004-...)
+       - Format: `tasks/NNN-YYYY-MM-DD-description/research.md` where:
+         - NNN is a zero-padded 3-digit number (001, 002, etc.)
+         - YYYY-MM-DD is today's date
+         - description is a brief kebab-case description of the research topic
+     - Example: `tasks/005-2025-01-15-authentication-flow/research.md`
 
 6. **Generate research document:**
-   - Use the metadata gathered in step 4
+   - Use the metadata gathered in step 5
    - Structure the document with YAML frontmatter followed by content:
      ```markdown
      ---
      date: [Current date and time with timezone in ISO format]
-     researcher: [Researcher name from thoughts status]
+     researcher: [Researcher name from git config]
      git_commit: [Current commit hash]
      branch: [Current branch name]
      repository: [Repository name]
@@ -111,10 +102,10 @@ Then wait for the user's research query.
 
      # Research: [User's Question/Topic]
 
-     **Date**: [Current date and time with timezone from step 4]
-     **Researcher**: [Researcher name from thoughts status]
-     **Git Commit**: [Current commit hash from step 4]
-     **Branch**: [Current branch name from step 4]
+     **Date**: [Current date and time with timezone from step 5]
+     **Researcher**: [Researcher name from git config]
+     **Git Commit**: [Current commit hash from step 5]
+     **Branch**: [Current branch name from step 5]
      **Repository**: [Repository name]
 
      ## Research Question
@@ -140,14 +131,8 @@ Then wait for the user's research query.
      ## Architecture Documentation
      [Current patterns, conventions, and design implementations found in the codebase]
 
-     ## Historical Context (from thoughts/)
-     [Relevant insights from thoughts/ directory with references]
-     - `thoughts/shared/something.md` - Historical decision about X
-     - `thoughts/local/notes.md` - Past exploration of Y
-     Note: Paths exclude "searchable/" even if found there
-
      ## Related Research
-     [Links to other research documents in thoughts/shared/research/]
+     [Links to other research documents in tasks/]
 
      ## Open Questions
      [Any areas that need further investigation]
@@ -160,10 +145,10 @@ Then wait for the user's research query.
      - Create permalinks: `https://github.com/{owner}/{repo}/blob/{commit}/{file}#L{line}`
    - Replace local file references with permalinks in the document
 
-8. **Sync and present findings:**
-   - Run `humanlayer thoughts sync` to sync the thoughts directory
+8. **Present findings:**
    - Present a concise summary of findings to the user
    - Include key file references for easy navigation
+   - Note the location of the research document
    - Ask if they have follow-up questions or need clarification
 
 9. **Handle follow-up questions:**
@@ -177,7 +162,6 @@ Then wait for the user's research query.
 ## Important notes:
 - Always use parallel Task agents to maximize efficiency and minimize context usage
 - Always run fresh codebase research - never rely solely on existing research documents
-- The thoughts/ directory provides historical context to supplement live findings
 - Focus on finding concrete file paths and line numbers for developer reference
 - Research documents should be self-contained with all necessary context
 - Each sub-agent prompt should be specific and focused on read-only documentation operations
@@ -186,7 +170,6 @@ Then wait for the user's research query.
 - Link to GitHub when possible for permanent references
 - Keep the main agent focused on synthesis, not deep file reading
 - Have sub-agents document examples and usage patterns as they exist
-- Explore all of thoughts/ directory, not just research subdirectory
 - **CRITICAL**: You and all sub-agents are documentarians, not evaluators
 - **REMEMBER**: Document what IS, not what SHOULD BE
 - **NO RECOMMENDATIONS**: Only describe the current state of the codebase
@@ -196,14 +179,6 @@ Then wait for the user's research query.
   - ALWAYS wait for all sub-agents to complete before synthesizing (step 4)
   - ALWAYS gather metadata before writing the document (step 5 before step 6)
   - NEVER write the research document with placeholder values
-- **Path handling**: The thoughts/searchable/ directory contains hard links for searching
-  - Always document paths by removing ONLY "searchable/" - preserve all other subdirectories
-  - Examples of correct transformations:
-    - `thoughts/searchable/allison/old_stuff/notes.md` → `thoughts/allison/old_stuff/notes.md`
-    - `thoughts/searchable/shared/prs/123.md` → `thoughts/shared/prs/123.md`
-    - `thoughts/searchable/global/shared/templates.md` → `thoughts/global/shared/templates.md`
-  - NEVER change allison/ to shared/ or vice versa - preserve the exact directory structure
-  - This ensures paths are correct for editing and navigation
 - **Frontmatter consistency**:
   - Always include frontmatter at the beginning of research documents
   - Keep frontmatter fields consistent across all research documents
