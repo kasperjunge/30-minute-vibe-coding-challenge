@@ -1,6 +1,3 @@
-- Enable new to initialize a project with a template.
-
-
-## FastAPI, Jinja2, SQLite template
-- Add login system
-- Support for HTMX
+Bugs:
+- Commands are copied incorrectly.
+- Make custom file system for rpi commands

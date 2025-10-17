@@ -118,7 +118,8 @@ def create_project(
     
     # Define paths
     projects_dir = script_dir / "projects"
-    commands_dir = script_dir / "context-engineering" / "commands"
+    commands_dir = script_dir / ".claude"
+    rules_dir = script_dir / ".cursor"
     templates_dir = get_templates_dir()
     
     new_project_dir = projects_dir / project_name
@@ -171,19 +172,28 @@ def create_project(
     else:
         console.print(f"[green]✓[/green] Created project: [cyan]{project_name}[/cyan]")
     
-    # Create .claude/commands directory
-    claude_commands_dir = new_project_dir / ".claude" / "commands"
-    claude_commands_dir.mkdir(parents=True, exist_ok=True)
+    # Create .claude directory and copy commands
+    project_claude_dir = new_project_dir / ".claude"
+    project_claude_dir.mkdir(parents=True, exist_ok=True)
     
-    # Copy command workflows (sdd/ and rpi/) to .claude/commands
-    for workflow_dir in ['sdd', 'rpi']:
+    # Copy command workflows (sdd, rpi, humanlayer) to .claude/
+    for workflow_dir in ['sdd', 'rpi', 'humanlayer']:
         src_workflow = commands_dir / workflow_dir
         if src_workflow.exists():
-            claude_workflow = claude_commands_dir / workflow_dir
-            claude_workflow.mkdir(parents=True, exist_ok=True)
-            copy_tree(src_workflow, claude_workflow)
+            dst_workflow = project_claude_dir / workflow_dir
+            dst_workflow.mkdir(parents=True, exist_ok=True)
+            copy_tree(src_workflow, dst_workflow)
     
-    console.print("[green]✓[/green] Copied commands (sdd + rpi workflows) to .claude/commands/")
+    console.print("[green]✓[/green] Copied commands to .claude/")
+    
+    # Create .cursor directory and copy rules
+    project_cursor_dir = new_project_dir / ".cursor"
+    project_cursor_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Copy rules to .cursor/
+    if rules_dir.exists():
+        copy_tree(rules_dir, project_cursor_dir)
+        console.print("[green]✓[/green] Copied rules to .cursor/")
     
     # Open the project in a new Cursor window
     if not no_open:
