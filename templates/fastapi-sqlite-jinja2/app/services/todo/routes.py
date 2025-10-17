@@ -8,6 +8,8 @@ from sqlalchemy.orm import Session
 from app.shared.database import get_db
 from app.shared.config import settings
 from app.services.todo.models import Todo
+from app.services.auth.models import User
+from app.services.auth.dependencies import require_auth
 
 router = APIRouter(prefix="/todos", tags=["todos"])
 
@@ -21,6 +23,7 @@ templates = Jinja2Templates(directory=[
 @router.get("/", response_class=HTMLResponse)
 async def list_todos(
     request: Request,
+    user: Annotated[User, Depends(require_auth)],
     db: Session = Depends(get_db)
 ):
     """List all todos"""
@@ -32,7 +35,10 @@ async def list_todos(
 
 
 @router.get("/new", response_class=HTMLResponse)
-async def new_todo_form(request: Request):
+async def new_todo_form(
+    request: Request,
+    user: Annotated[User, Depends(require_auth)]
+):
     """Show form for creating new todo"""
     return templates.TemplateResponse(
         "form.html",
@@ -42,6 +48,7 @@ async def new_todo_form(request: Request):
 
 @router.post("/", response_class=RedirectResponse)
 async def create_todo(
+    user: Annotated[User, Depends(require_auth)],
     title: Annotated[str, Form()],
     description: Annotated[str, Form()] = "",
     db: Session = Depends(get_db)
@@ -68,6 +75,7 @@ async def create_todo(
 async def edit_todo_form(
     request: Request,
     todo_id: int,
+    user: Annotated[User, Depends(require_auth)],
     db: Session = Depends(get_db)
 ):
     """Show form for editing existing todo"""
@@ -90,6 +98,7 @@ async def edit_todo_form(
 @router.post("/{todo_id}", response_class=RedirectResponse)
 async def update_todo(
     todo_id: int,
+    user: Annotated[User, Depends(require_auth)],
     title: Annotated[str, Form()],
     description: Annotated[str, Form()] = "",
     completed: Annotated[str, Form()] = "",
@@ -118,6 +127,7 @@ async def update_todo(
 @router.post("/{todo_id}/toggle", response_class=RedirectResponse)
 async def toggle_todo(
     todo_id: int,
+    user: Annotated[User, Depends(require_auth)],
     db: Session = Depends(get_db)
 ):
     """Toggle todo completion status"""
@@ -133,6 +143,7 @@ async def toggle_todo(
 @router.post("/{todo_id}/delete", response_class=RedirectResponse)
 async def delete_todo(
     todo_id: int,
+    user: Annotated[User, Depends(require_auth)],
     db: Session = Depends(get_db)
 ):
     """Delete a todo"""

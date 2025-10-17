@@ -25,6 +25,20 @@
                     <ul class="flex space-x-4">
                         <li><a href="/" class="hover:text-blue-100">Home</a></li>
                         <li><a href="/todos" class="hover:text-blue-100">Todos</a></li>
+                        {% if request.state.user %}
+                            <li><a href="/auth/profile/{{ request.state.user.email }}" class="hover:text-blue-100">{{ request.state.user.email }}</a></li>
+                            <li>
+                                <form method="post" action="/auth/logout" class="inline">
+                                    <button type="submit" class="hover:text-blue-100">Logout</button>
+                                </form>
+                            </li>
+                            {% if request.state.user.is_admin %}
+                                <li><span class="bg-purple-500 px-2 py-1 rounded text-xs">Admin</span></li>
+                            {% endif %}
+                        {% else %}
+                            <li><a href="/auth/login" class="hover:text-blue-100">Login</a></li>
+                            <li><a href="/auth/register" class="hover:text-blue-100">Register</a></li>
+                        {% endif %}
                     </ul>
                 </nav>
             </div>

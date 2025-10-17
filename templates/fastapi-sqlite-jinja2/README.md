@@ -1,309 +1,190 @@
-# FastAPI + SQLite + Jinja2 Webapp Template
+# FastAPI + SQLite + Jinja2 Template
 
-A minimal, production-ready webapp template using FastAPI, SQLite, and Jinja2. Designed to work seamlessly with AI coding assistants like Cursor for rapid webapp development.
+A production-ready FastAPI template with SQLite database, Jinja2 templating, and complete authentication system. Perfect for MVPs and rapid prototyping.
 
 ## Features
 
-✨ **Production Ready** - Complete webapp with all essentials  
-🚀 **Quick Start** - Clone and run in seconds  
-🤖 **AI-Friendly** - Clear patterns for AI assistants to extend  
-🎨 **Modern UI** - Tailwind CSS for professional styling  
-💾 **Zero Config Database** - SQLite with auto-migrations  
-🧪 **Testing Included** - Pytest setup with examples  
-🐳 **Deploy Ready** - Dockerfile for Coolify and other platforms
-
-## Tech Stack
-
-- **Backend**: FastAPI (Python 3.12)
-- **Database**: SQLite with SQLAlchemy ORM
-- **Templates**: Jinja2
-- **Styling**: Tailwind CSS (via CDN)
-- **Migrations**: Alembic
-- **Testing**: Pytest
-- **Package Manager**: UV
+- 🚀 FastAPI web framework
+- 🗄️ SQLAlchemy ORM with SQLite
+- 🎨 Jinja2 templates with Tailwind CSS
+- 🔐 Complete authentication system (email/password)
+- 🔄 Alembic database migrations
+- ✅ Pytest test suite
+- 📦 UV package management
+- 🏗️ Service-based architecture
 
 ## Quick Start
 
-### Prerequisites
-
-- Python 3.12+
-- [UV](https://docs.astral.sh/uv/) package manager
-
-Install UV:
+1. **Install UV** (if not already installed):
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### Installation
+2. **Clone or copy this template**:
+```bash
+cp -r templates/fastapi-sqlite-jinja2 my-project
+cd my-project
+```
 
-1. **Clone this repository**
-   ```bash
-   git clone <your-repo-url>
-   cd <project-directory>
-   ```
+3. **Install dependencies**:
+```bash
+uv sync
+```
 
-2. **Install dependencies**
-   ```bash
-   uv sync
-   ```
+4. **Run migrations**:
+```bash
+uv run alembic upgrade head
+```
 
-3. **Run the application**
-   ```bash
-   uv run python main.py
-   ```
+5. **Start the server**:
+```bash
+uv run python main.py
+```
 
-4. **Open your browser**
-   ```
-   http://localhost:8000
-   ```
+Visit http://localhost:8000
 
-That's it! You should see the homepage with a working TODO list example.
+## Authentication
+
+This template includes a complete authentication system with:
+
+- **Email/password registration** at `/auth/register`
+- **Login/logout** at `/auth/login` and `/auth/logout`
+- **User profiles** at `/auth/profile/{email}`
+- **Session-based auth** (signed cookies, configurable expiration)
+- **Admin functionality** (is_admin flag, require_admin dependency)
+- **Password security** (bcrypt hashing with cost factor 12)
+
+### Protecting Routes
+
+Use the provided dependencies to protect your routes:
+
+```python
+from typing import Annotated
+from fastapi import APIRouter, Depends
+from app.services.auth.models import User
+from app.services.auth.dependencies import require_auth, require_admin
+
+router = APIRouter()
+
+@router.get("/protected")
+async def protected_route(user: Annotated[User, Depends(require_auth)]):
+    return {"message": f"Hello {user.email}"}
+
+@router.get("/admin-only")
+async def admin_route(user: Annotated[User, Depends(require_admin)]):
+    return {"message": "Admin access granted"}
+```
+
+### Accessing Current User in Templates
+
+The current user is automatically loaded into `request.state.user`:
+
+```jinja2
+{% if request.state.user %}
+    <p>Welcome, {{ request.state.user.email }}</p>
+    {% if request.state.user.is_admin %}
+        <p>You are an admin</p>
+    {% endif %}
+{% else %}
+    <a href="/auth/login">Login</a>
+{% endif %}
+```
+
+### Configuration
+
+Set these environment variables or update `app/shared/config.py`:
+
+- `SESSION_SECRET_KEY` - Secret key for signing cookies (change in production!)
+- `SESSION_MAX_AGE` - Session duration in seconds (default: 30 days)
+
+**IMPORTANT**: Generate a secure secret key for production:
+```bash
+python -c "import secrets; print(secrets.token_hex(32))"
+```
 
 ## Project Structure
 
 ```
-project/
+.
 ├── app/
-│   ├── services/           # Feature modules (services)
-│   │   └── todo/          # Example: TODO service
-│   │       ├── models.py  # Database models
-│   │       ├── routes.py  # API routes & handlers
-│   │       └── templates/ # Service-specific templates
-│   ├── shared/            # Shared infrastructure
-│   │   ├── config.py      # Configuration management
-│   │   ├── database.py    # Database setup
-│   │   └── templates/     # Shared templates (base, errors)
-│   └── static/            # Static files (CSS, JS)
-├── data/                  # SQLite database location
-├── migrations/            # Alembic migrations
-├── tests/                 # Test suite
-├── main.py               # Application entry point
-└── pyproject.toml        # Dependencies
+│   ├── services/
+│   │   ├── auth/           # Authentication service
+│   │   │   ├── models.py   # User model
+│   │   │   ├── routes.py   # Auth endpoints
+│   │   │   ├── dependencies.py  # Auth dependencies
+│   │   │   ├── utils.py    # Password hashing
+│   │   │   └── templates/  # Auth templates
+│   │   └── todo/           # Example service (remove this)
+│   ├── shared/
+│   │   ├── config.py       # Application settings
+│   │   ├── database.py     # Database setup
+│   │   ├── middleware.py   # Custom middleware
+│   │   └── templates/      # Shared templates
+│   └── static/             # CSS, JS, images
+├── migrations/             # Alembic migrations
+├── tests/                  # Test suite
+├── main.py                 # Application entry point
+└── pyproject.toml          # Dependencies
 ```
 
-### Service-Oriented Architecture
+## Development
 
-Each feature is organized as a **service** with its own:
-- **Models** - Database tables
-- **Routes** - HTTP endpoints and handlers
-- **Templates** - UI pages
-
-This makes it easy to:
-- Add new features without affecting existing code
-- Remove example features (like TODO)
-- Let AI assistants understand where to add code
-
-## How to Use This Template
-
-### Starting Your Project
-
-1. **Remove the TODO example** (it's just a demo):
-   ```bash
-   rm -rf app/services/todo
-   ```
-
-2. **Remove TODO router from `main.py`**:
-   ```python
-   # Delete these lines:
-   from app.services.todo.routes import router as todo_router
-   app.include_router(todo_router)
-   ```
-
-3. **Create your first service**:
-   ```bash
-   mkdir -p app/services/myfeature/templates
-   touch app/services/myfeature/{__init__.py,models.py,routes.py}
-   ```
-
-### Adding a New Service
-
-1. **Create the service directory**:
-   ```bash
-   mkdir -p app/services/myservice/templates
-   ```
-
-2. **Define your model** in `app/services/myservice/models.py`:
-   ```python
-   from sqlalchemy.orm import Mapped, mapped_column
-   from app.shared.database import Base
-
-   class MyModel(Base):
-       __tablename__ = "my_table"
-       id: Mapped[int] = mapped_column(primary_key=True)
-       name: Mapped[str]
-   ```
-
-3. **Create a migration**:
-   ```bash
-   uv run alembic revision --autogenerate -m "Add my_table"
-   ```
-
-4. **Create routes** in `app/services/myservice/routes.py`:
-   ```python
-   from fastapi import APIRouter, Request
-   from fastapi.responses import HTMLResponse
-   from fastapi.templating import Jinja2Templates
-
-   router = APIRouter(prefix="/myservice", tags=["myservice"])
-   templates = Jinja2Templates(directory=[
-       "app/shared/templates",
-       "app/services/myservice/templates"
-   ])
-
-   @router.get("/", response_class=HTMLResponse)
-   async def index(request: Request):
-       return templates.TemplateResponse("index.html", {"request": request})
-   ```
-
-5. **Register your router** in `main.py`:
-   ```python
-   from app.services.myservice.routes import router as myservice_router
-   app.include_router(myservice_router)
-   ```
-
-## Configuration
-
-Create a `.env` file in the project root (optional):
-
-```env
-APP_NAME="My Webapp"
-DEBUG=true
-DATABASE_URL=sqlite:///./data/app.db
-HOST=0.0.0.0
-PORT=8000
-```
-
-All settings have sensible defaults for development.
-
-## Database Migrations
-
-Migrations run automatically on startup in development mode.
-
-**Manual migration commands**:
+### Running Tests
 
 ```bash
-# Create a migration
-uv run alembic revision --autogenerate -m "Description"
+uv run pytest
+```
+
+### Creating a New Service
+
+1. Create directory: `app/services/myservice/`
+2. Add `models.py`, `routes.py`, `templates/`
+3. Import and include router in `main.py`
+
+### Database Migrations
+
+```bash
+# Create migration
+uv run alembic revision --autogenerate -m "description"
 
 # Apply migrations
 uv run alembic upgrade head
 
-# Rollback one migration
+# Rollback
 uv run alembic downgrade -1
-
-# Check current version
-uv run alembic current
-```
-
-## Testing
-
-Run the test suite:
-
-```bash
-# All tests
-uv run pytest
-
-# Specific test file
-uv run pytest tests/test_todo_routes.py
-
-# Verbose output
-uv run pytest -v
-
-# With coverage (if installed)
-uv run pytest --cov=app
 ```
 
 ## Deployment
 
-### Docker Deployment (Coolify, etc.)
+1. Set `DEBUG=False` in environment
+2. Generate secure `SESSION_SECRET_KEY`
+3. Use PostgreSQL instead of SQLite for production
+4. Set up proper static file serving (nginx, CDN)
+5. Use a production WSGI server (gunicorn, uvicorn)
 
-Build and run with Docker:
+## Removing Example Code
+
+The template includes a TODO service as an example. To start fresh:
 
 ```bash
-# Build image
-docker build -t myapp .
+# Remove TODO service
+rm -rf app/services/todo
 
-# Run container
-docker run -p 8000:8000 -v $(pwd)/data:/app/data myapp
+# Remove from main.py
+# Delete: from app.services.todo.routes import router as todo_router
+# Delete: app.include_router(todo_router)
+
+# Remove TODO migration
+rm migrations/versions/d8eafd73eb5b_initial_migration_add_todos_table.py
+
+# Update navigation in app/shared/templates/base.html
+# Remove the "Todos" link
 ```
-
-### Environment Variables for Production
-
-Set these in your deployment platform:
-
-```env
-DEBUG=false
-DATABASE_URL=sqlite:///./data/app.db
-HOST=0.0.0.0
-PORT=8000
-```
-
-**Important**: Mount a volume for the `data/` directory to persist the database!
-
-## Troubleshooting
-
-### Port already in use
-```bash
-# Change port in .env
-PORT=8001
-```
-
-### Database locked error
-```bash
-# SQLite is single-writer. If you get lock errors:
-# - Check no other instance is running
-# - Restart the application
-```
-
-### Import errors
-```bash
-# Reinstall dependencies
-uv sync
-```
-
-### Migrations not running
-```bash
-# Manually run migrations
-uv run alembic upgrade head
-```
-
-## Customization
-
-### Changing the styling
-
-- **Tailwind CSS**: Edit classes in templates
-- **Custom CSS**: Add to `app/static/css/custom.css`
-- **Different framework**: Replace Tailwind CDN link in `base.html`
-
-### Adding authentication
-
-This template doesn't include auth by design (keep it minimal). To add:
-
-1. Add `fastapi-users` or `python-jose` to dependencies
-2. Create `app/services/auth/` service
-3. Add middleware to protect routes
-4. Update base template with login/logout
-
-## Why This Stack?
-
-**FastAPI**: Modern, fast, great developer experience  
-**SQLite**: Zero setup, perfect for small-medium apps  
-**Jinja2**: Simple, powerful templating  
-**Tailwind**: Professional UI without build complexity  
-**UV**: Fast, modern Python package management  
-
-This stack maximizes **simplicity** while providing everything needed for real projects.
-
-## Contributing
-
-This is a template repository. Fork it and make it your own!
 
 ## License
 
-MIT License - use freely for any project.
+MIT
 
----
+## Support
 
-**Happy coding! 🚀**
-
-Questions? Check the TODO service code for examples of all patterns.
+For issues or questions, please open an issue on GitHub.

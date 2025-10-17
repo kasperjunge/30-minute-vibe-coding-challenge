@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./data/app.db"
     host: str = "0.0.0.0"
     port: int = 8000
+    session_secret_key: str = "change-this-in-production-to-a-random-secret-key"
+    session_max_age: int = 30 * 24 * 60 * 60
     
     model_config = SettingsConfigDict(
         env_file=".env",

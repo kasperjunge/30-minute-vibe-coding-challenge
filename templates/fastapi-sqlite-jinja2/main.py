@@ -6,17 +6,21 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.middleware.sessions import SessionMiddleware
 from alembic import command
 from alembic.config import Config
 
 from app.shared.config import settings
+from app.shared.middleware import UserContextMiddleware
 from app.services.todo.routes import router as todo_router
+from app.services.auth.routes import router as auth_router
 
 
 # Setup template directories
 template_dirs = [
     "app/shared/templates",
-    "app/services/todo/templates"
+    "app/services/todo/templates",
+    "app/services/auth/templates"
 ]
 templates = Jinja2Templates(directory=template_dirs)
 
@@ -48,6 +52,15 @@ def create_app() -> FastAPI:
         lifespan=lifespan
     )
     
+    # Add middleware (order matters - UserContext needs SessionMiddleware)
+    app.add_middleware(UserContextMiddleware)
+    app.add_middleware(
+        SessionMiddleware,
+        secret_key=settings.session_secret_key,
+        max_age=settings.session_max_age,
+        session_cookie="app_session"
+    )
+    
     # Mount static files
     app.mount("/static", StaticFiles(directory="app/static"), name="static")
     
@@ -75,6 +88,7 @@ def create_app() -> FastAPI:
     
     # Include service routers
     app.include_router(todo_router)
+    app.include_router(auth_router)
     
     return app
 

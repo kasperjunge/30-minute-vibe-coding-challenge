@@ -171,27 +171,19 @@ def create_project(
     else:
         console.print(f"[green]✓[/green] Created project: [cyan]{project_name}[/cyan]")
     
-    # Create .claude/commands and .cursor/commands directories
+    # Create .claude/commands directory
     claude_commands_dir = new_project_dir / ".claude" / "commands"
-    cursor_commands_dir = new_project_dir / ".cursor" / "commands"
-    
     claude_commands_dir.mkdir(parents=True, exist_ok=True)
-    cursor_commands_dir.mkdir(parents=True, exist_ok=True)
     
-    # Copy command workflows (sdd/ and rpi/) into both directories
+    # Copy command workflows (sdd/ and rpi/) to .claude/commands
     for workflow_dir in ['sdd', 'rpi']:
         src_workflow = commands_dir / workflow_dir
         if src_workflow.exists():
             claude_workflow = claude_commands_dir / workflow_dir
-            cursor_workflow = cursor_commands_dir / workflow_dir
-            
             claude_workflow.mkdir(parents=True, exist_ok=True)
-            cursor_workflow.mkdir(parents=True, exist_ok=True)
-            
             copy_tree(src_workflow, claude_workflow)
-            copy_tree(src_workflow, cursor_workflow)
     
-    console.print("[green]✓[/green] Copied commands (sdd + rpi workflows) to .claude/commands/ and .cursor/commands/")
+    console.print("[green]✓[/green] Copied commands (sdd + rpi workflows) to .claude/commands/")
     
     # Open the project in a new Cursor window
     if not no_open:
