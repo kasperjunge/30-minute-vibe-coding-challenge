@@ -172,19 +172,15 @@ def create_project(
     else:
         console.print(f"[green]✓[/green] Created project: [cyan]{project_name}[/cyan]")
     
-    # Create .claude directory and copy commands
+    # Create .claude directory and copy all contents
     project_claude_dir = new_project_dir / ".claude"
     project_claude_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Copy command workflows (sdd, rpi, humanlayer) to .claude/
-    for workflow_dir in ['sdd', 'rpi', 'humanlayer']:
-        src_workflow = commands_dir / workflow_dir
-        if src_workflow.exists():
-            dst_workflow = project_claude_dir / workflow_dir
-            dst_workflow.mkdir(parents=True, exist_ok=True)
-            copy_tree(src_workflow, dst_workflow)
-    
-    console.print("[green]✓[/green] Copied commands to .claude/")
+
+    # Copy all .claude/ subdirectories (agents, commands, hack, etc.)
+    if commands_dir.exists():
+        copy_tree(commands_dir, project_claude_dir)
+
+    console.print("[green]✓[/green] Copied .claude/ contents")
     
     # Create .cursor directory and copy rules
     project_cursor_dir = new_project_dir / ".cursor"
