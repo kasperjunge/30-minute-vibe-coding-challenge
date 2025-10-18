@@ -1,25 +1,22 @@
 ---
-description: Implement technical plans from tasks/<username>/ with verification
+description: Implement technical plans from tasks/ with verification
 ---
 
 # Implement Plan
 
-You are tasked with implementing an approved technical plan from `tasks/<username>/`. These plans contain phases with specific changes and success criteria.
-
-Plans are organized by username in the tasks directory structure: `tasks/<username>/NNN-YYYY-MM-DD-description/plan.md`
+You are tasked with implementing an approved technical plan from `tasks/`. These plans contain phases with specific changes and success criteria.
 
 ## Getting Started
 
-When given a plan path (e.g., `tasks/kasper-junge/003-2025-01-15-feature-name/plan.md`):
+When given a plan path:
 - Read the plan completely and check for any existing checkmarks (- [x])
-- Read the original requirements file and all files mentioned in the plan
-- Check if there's a research.md in the same directory for additional context
+- Read the original ticket and all files mentioned in the plan
 - **Read files fully** - never use limit/offset parameters, you need complete context
 - Think deeply about how the pieces fit together
 - Create a todo list to track your progress
 - Start implementing if you understand what needs to be done
 
-If no plan path provided, ask for one with the format: `tasks/<username>/NNN-YYYY-MM-DD-description/plan.md`
+If no plan path provided, ask for one.
 
 ## Implementation Philosophy
 

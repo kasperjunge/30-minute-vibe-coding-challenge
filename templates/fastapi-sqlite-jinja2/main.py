@@ -12,14 +12,12 @@ from alembic.config import Config
 
 from app.shared.config import settings
 from app.shared.middleware import UserContextMiddleware
-from app.services.todo.routes import router as todo_router
 from app.services.auth.routes import router as auth_router
 
 
 # Setup template directories
 template_dirs = [
     "app/shared/templates",
-    "app/services/todo/templates",
     "app/services/auth/templates"
 ]
 templates = Jinja2Templates(directory=template_dirs)
@@ -70,6 +68,11 @@ def create_app() -> FastAPI:
         return templates.TemplateResponse("home.html", {"request": request, "settings": settings})
     
     # Error handlers
+    @app.exception_handler(401)
+    async def unauthorized_handler(request: Request, exc):
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url="/auth/login", status_code=307)
+    
     @app.exception_handler(404)
     async def not_found_handler(request: Request, exc):
         return templates.TemplateResponse(
@@ -87,7 +90,6 @@ def create_app() -> FastAPI:
         )
     
     # Include service routers
-    app.include_router(todo_router)
     app.include_router(auth_router)
     
     return app

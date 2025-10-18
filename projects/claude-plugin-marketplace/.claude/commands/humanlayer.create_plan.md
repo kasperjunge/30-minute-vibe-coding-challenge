@@ -26,8 +26,8 @@ Please provide:
 
 I'll analyze this information and work with you to create a comprehensive plan.
 
-Tip: You can also invoke this command with a requirements file directly: `/create_plan tasks/kasper-junge/001-2025-01-15-feature-name/requirements.md`
-For deeper analysis, try: `/create_plan think deeply about tasks/kasper-junge/001-2025-01-15-feature-name/requirements.md`
+Tip: You can also invoke this command with a requirements file directly: `/create_plan tasks/001-2025-01-15-feature-name/requirements.md`
+For deeper analysis, try: `/create_plan think deeply about tasks/001-2025-01-15-feature-name/requirements.md`
 ```
 
 Then wait for the user's input.
@@ -37,7 +37,7 @@ Then wait for the user's input.
 ### Step 1: Context Gathering & Initial Analysis
 
 1. **Read all mentioned files immediately and FULLY**:
-   - Requirements files (e.g., `tasks/<username>/001-2025-01-15-feature-name/requirements.md`)
+   - Requirements files (e.g., `tasks/001-2025-01-15-feature-name/requirements.md`)
    - Research documents from the task directory
    - Related implementation plans
    - Any JSON/data files mentioned
@@ -162,30 +162,19 @@ Once aligned on approach:
 
 After structure approval:
 
-1. **Determine username:**
-   - Run the `.claude/hack/spec_metadata.sh` script if not already run
-   - Check the script output for "Normalized Username"
-   - If present → use it
-   - If not present:
-     - Check for "Existing Users" in the output
-     - If existing users found → prompt: "Which user are you? [user1/user2/user3]: "
-     - If no existing users → prompt: "Enter your name: " then normalize it (lowercase, spaces to hyphens)
-   - Store the username for creating the directory path
-
-2. **Determine the task directory**:
-   - If working on an existing task (e.g., research already exists), write to that task's directory: `tasks/<username>/NNN-YYYY-MM-DD-description/plan.md`
+1. **Determine the task directory**:
+   - If working on an existing task, write to that task's directory: `tasks/NNN-YYYY-MM-DD-description/plan.md`
    - If starting a new task, create a new numbered directory:
-     - Check what task numbers already exist in `tasks/<username>/`
-     - Use the next sequential number (e.g., if tasks/kasper-junge/003-... exists, create tasks/kasper-junge/004-...)
-     - Format: `tasks/<username>/NNN-YYYY-MM-DD-description/plan.md` where:
-       - `<username>` is the normalized username (e.g., kasper-junge, jonas-peterson)
-       - NNN is a zero-padded 3-digit number (001, 002, etc.) - per-user numbering
+     - Check what task numbers already exist in `tasks/`
+     - Use the next sequential number (e.g., if tasks/003-... exists, create tasks/004-...)
+     - Format: `tasks/NNN-YYYY-MM-DD-description/plan.md` where:
+       - NNN is a zero-padded 3-digit number (001, 002, etc.)
        - YYYY-MM-DD is today's date
        - description is a brief kebab-case description
-   - Example: `tasks/kasper-junge/005-2025-01-15-add-authentication/plan.md`
+   - Example: `tasks/005-2025-01-15-add-authentication/plan.md`
 
-3. **Write the plan** to the task directory
-4. **Use this template structure**:
+2. **Write the plan** to the task directory
+3. **Use this template structure**:
 
 ````markdown
 # [Feature/Task Name] Implementation Plan
@@ -279,8 +268,8 @@ After structure approval:
 
 ## References
 
-- Original requirements: `tasks/<username>/NNN-YYYY-MM-DD-description/requirements.md` (if applicable)
-- Related research: `tasks/<username>/NNN-YYYY-MM-DD-description/research.md` (if applicable)
+- Original requirements: `tasks/NNN-YYYY-MM-DD-description/requirements.md` (if applicable)
+- Related research: `tasks/NNN-YYYY-MM-DD-description/research.md` (if applicable)
 - Similar implementation: `[file:line]`
 ````
 
@@ -289,7 +278,7 @@ After structure approval:
 1. **Present the draft plan location**:
    ```
    I've created the initial implementation plan at:
-   `tasks/<username>/NNN-YYYY-MM-DD-description/plan.md`
+   `tasks/NNN-YYYY-MM-DD-description/plan.md`
 
    Please review it and let me know:
    - Are the phases properly scoped?
@@ -440,7 +429,7 @@ tasks = [
 User: /implementation_plan
 Assistant: I'll help you create a detailed implementation plan...
 
-User: We need to add authentication to the API. See tasks/kasper-junge/003-2025-01-10-api-auth/requirements.md
+User: We need to add authentication to the API. See tasks/003-2025-01-10-api-auth/requirements.md
 Assistant: Let me read that requirements file completely first...
 
 [Reads file fully]

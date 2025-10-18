@@ -72,27 +72,16 @@ Then wait for the user's research query.
 
 5. **Gather metadata and determine research document location:**
    - Run the `.claude/hack/spec_metadata.sh` script to generate all relevant metadata
-   
-   - **Determine username:**
-     - Check the script output for "Normalized Username"
-     - If present → use it
-     - If not present:
-       - Check for "Existing Users" in the output
-       - If existing users found → prompt: "Which user are you? [user1/user2/user3]: "
-       - If no existing users → prompt: "Enter your name: " then normalize it (lowercase, spaces to hyphens)
-     - Store the username for creating the directory path
-   
-   - **Determine task directory:**
-     - If research is for an existing task, write to that task's directory: `tasks/<username>/NNN-YYYY-MM-DD-description/research.md`
+   - Determine task directory:
+     - If research is for an existing task, write to that task's directory: `tasks/NNN-YYYY-MM-DD-description/research.md`
      - If starting new research (not tied to existing task), create a new task directory:
-       - Check what task numbers already exist in `tasks/<username>/`
-       - Use the next sequential number (e.g., if tasks/kasper-junge/003-... exists, create tasks/kasper-junge/004-...)
-       - Format: `tasks/<username>/NNN-YYYY-MM-DD-description/research.md` where:
-         - `<username>` is the normalized username (e.g., kasper-junge, jonas-peterson)
-         - NNN is a zero-padded 3-digit number (001, 002, etc.) - per-user numbering
+       - Check what task numbers already exist in `tasks/`
+       - Use the next sequential number (e.g., if tasks/003-... exists, create tasks/004-...)
+       - Format: `tasks/NNN-YYYY-MM-DD-description/research.md` where:
+         - NNN is a zero-padded 3-digit number (001, 002, etc.)
          - YYYY-MM-DD is today's date
          - description is a brief kebab-case description of the research topic
-     - Example: `tasks/kasper-junge/005-2025-01-15-authentication-flow/research.md`
+     - Example: `tasks/005-2025-01-15-authentication-flow/research.md`
 
 6. **Generate research document:**
    - Use the metadata gathered in step 5
@@ -143,7 +132,7 @@ Then wait for the user's research query.
      [Current patterns, conventions, and design implementations found in the codebase]
 
      ## Related Research
-     [Links to other research documents in tasks/<username>/]
+     [Links to other research documents in tasks/]
 
      ## Open Questions
      [Any areas that need further investigation]

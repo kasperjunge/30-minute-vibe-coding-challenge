@@ -114,7 +114,6 @@ python -c "import secrets; print(secrets.token_hex(32))"
 │   │   │   ├── dependencies.py  # Auth dependencies
 │   │   │   ├── utils.py    # Password hashing
 │   │   │   └── templates/  # Auth templates
-│   │   └── todo/           # Example service (remove this)
 │   ├── shared/
 │   │   ├── config.py       # Application settings
 │   │   ├── database.py     # Database setup
@@ -137,9 +136,25 @@ uv run pytest
 
 ### Creating a New Service
 
-1. Create directory: `app/services/myservice/`
-2. Add `models.py`, `routes.py`, `templates/`
-3. Import and include router in `main.py`
+This template uses a service-based architecture. Each feature is organized as a self-contained service:
+
+```
+app/services/your_feature/
+├── __init__.py
+├── models.py          # SQLAlchemy models
+├── routes.py          # FastAPI endpoints
+├── templates/         # Jinja2 templates
+└── dependencies.py    # (optional) Shared dependencies
+```
+
+To add a new service:
+1. Create a new directory under `app/services/`
+2. Define your models in `models.py`
+3. Create your routes in `routes.py`
+4. Register templates in `main.py` template_dirs
+5. Include your router in `main.py`
+
+See the `auth` service for a complete example
 
 ### Database Migrations
 
@@ -161,25 +176,6 @@ uv run alembic downgrade -1
 3. Use PostgreSQL instead of SQLite for production
 4. Set up proper static file serving (nginx, CDN)
 5. Use a production WSGI server (gunicorn, uvicorn)
-
-## Removing Example Code
-
-The template includes a TODO service as an example. To start fresh:
-
-```bash
-# Remove TODO service
-rm -rf app/services/todo
-
-# Remove from main.py
-# Delete: from app.services.todo.routes import router as todo_router
-# Delete: app.include_router(todo_router)
-
-# Remove TODO migration
-rm migrations/versions/d8eafd73eb5b_initial_migration_add_todos_table.py
-
-# Update navigation in app/shared/templates/base.html
-# Remove the "Todos" link
-```
 
 ## License
 

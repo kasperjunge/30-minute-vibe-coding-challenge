@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.services.auth.models import User
 from app.services.auth.utils import hash_password, verify_password
-from app.services.auth.dependencies import get_current_user
+from app.services.auth.dependencies import get_current_user, require_auth
 from app.shared.database import get_db
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -113,7 +113,8 @@ async def logout(request: Request):
 async def user_profile(
     email: str,
     request: Request,
-    db: Annotated[Session, Depends(get_db)]
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(require_auth)]
 ):
     user = db.query(User).filter(User.email == email).first()
     if not user:

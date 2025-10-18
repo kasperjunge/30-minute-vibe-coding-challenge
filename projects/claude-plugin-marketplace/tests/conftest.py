@@ -85,7 +85,8 @@ def client(test_db):
     template_dirs = [
         "app/shared/templates",
         "app/services/auth/templates",
-        "app/services/plugin/templates"
+        "app/services/plugin/templates",
+        "app/services/skill/templates"
     ]
     templates = Jinja2Templates(directory=template_dirs)
     
@@ -166,10 +167,14 @@ def client(test_db):
     # Include auth router
     from app.services.auth.routes import router as auth_router
     app.include_router(auth_router)
-    
+
     # Include plugin router
     from app.services.plugin.routes import router as plugin_router
     app.include_router(plugin_router)
+
+    # Include skill router
+    from app.services.skill.routes import router as skill_router
+    app.include_router(skill_router)
     
     # Override get_db dependency
     # Use the test engine to create new sessions for each request

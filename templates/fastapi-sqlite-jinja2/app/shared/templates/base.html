@@ -24,7 +24,6 @@
                 <nav>
                     <ul class="flex space-x-4">
                         <li><a href="/" class="hover:text-blue-100">Home</a></li>
-                        <li><a href="/todos" class="hover:text-blue-100">Todos</a></li>
                         {% if request.state.user %}
                             <li><a href="/auth/profile/{{ request.state.user.email }}" class="hover:text-blue-100">{{ request.state.user.email }}</a></li>
                             <li>
@@ -65,7 +64,7 @@
     <footer class="bg-gray-800 text-white py-6 mt-auto">
         <div class="container mx-auto px-4 text-center">
             <p>FastAPI + SQLite + Jinja2 Template</p>
-            <p class="text-sm text-gray-400 mt-2">Remove the TODO service to start your project</p>
+            <p class="text-sm text-gray-400 mt-2">Built with FastAPI, SQLite, and Jinja2</p>
         </div>
     </footer>
     

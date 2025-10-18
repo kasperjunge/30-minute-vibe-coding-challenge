@@ -15,6 +15,7 @@ from app.shared.middleware import UserContextMiddleware
 from app.shared.database import get_db
 from app.services.auth.routes import router as auth_router
 from app.services.plugin.routes import router as plugin_router
+from app.services.skill.routes import router as skill_router
 from app.services.plugin.models import Plugin, PluginVersion
 from sqlalchemy.orm import Session
 from fastapi import Depends
@@ -159,6 +160,7 @@ def create_app() -> FastAPI:
     # Include service routers
     app.include_router(auth_router)
     app.include_router(plugin_router)
+    app.include_router(skill_router)
     
     return app
 
