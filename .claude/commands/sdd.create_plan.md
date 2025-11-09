@@ -20,7 +20,47 @@ Then proceed to read documents and generate plan.
    - Map tasks to user stories from requirements
    - Clear scope boundaries
 
+## Planning Strategy
+
+### UI-First Planning Approach
+
+**When to use:** Use UI-first planning unless there's no UI involved (e.g., pure API, CLI tool, library, data pipeline).
+
+**Why UI-First matters:**
+
+The traditional backend-first approach (database → API → UI) has a critical flaw: you don't see or interact with anything until late in the process. This causes:
+- **Late discovery of design misalignments** - Costly to fix after backend is built
+- **Loss of momentum** - Abstract data models feel like slow progress
+- **Inability to verify direction** - Can't know if it's right until you see it
+
+UI-first solves this by:
+- **Immediate visual verification** - See the UI running with mock data early, giving confidence about direction
+- **Catch misunderstandings early** - Find issues when UI is easy to adjust, not after complex data layer is built
+- **Better data model design** - Building UI first reveals what data shapes actually make sense
+- **Maintains energy** - Working interactive UI (even with fake data) keeps momentum high
+- **Easier iteration** - Refine UX freely with mocks, then build backend to support validated design
+
+**Key insight:** UI with mock data is cheap to change. Backend with real data/APIs is expensive to change. So validate the expensive part by building the cheap part first.
+
+**Example phase structure** (adapt to project needs, this is inspiration not a strict template):
+- **Phase 1: Project Setup & UI Shell** - Initialize project, setup dev tools, create basic app shell, verify dev server runs and shows basic UI
+- **Phase 2: Complete UI with Mock Data** - Implement ALL UI components with hardcoded/mock data, make it fully interactive and navigable
+- **Phase 3: Data Layer & Backend** - Build database/storage, API endpoints, business logic, backend tests
+- **Phase 4: Integration** - Replace mocks with real data, connect UI to backend, handle loading/error states
+- **Phase 5: Polish & Testing** - Edge cases, error handling, final acceptance criteria verification
+
+### Backend-First Planning Approach
+
+**When to use:** Projects with no user interface (REST APIs, CLI tools, libraries, background services, data pipelines).
+
+**Planning approach:** Structure phases around core functionality, data model, API contracts, and verification strategies appropriate for non-UI projects.
+
 ## Guidelines
+- **Detect if project has a UI** based on design.md
+- **If UI exists:** Use UI-first planning approach (see above for reasoning)
+- **If no UI:** Use appropriate structure for that project type (backend-first)
+- The 5-phase UI-first structure is an **example for inspiration** - adapt to project needs
+- **Key principle for UI projects:** See working UI with mocks early → build backend → integrate
 - Be specific: every task needs concrete file paths and line numbers
 - Every task MUST have:
   - Test Requirements section

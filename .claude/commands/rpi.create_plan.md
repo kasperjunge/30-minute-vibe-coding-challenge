@@ -163,7 +163,7 @@ Once aligned on approach:
 After structure approval:
 
 1. **Determine username:**
-   - Run the `.claude/hack/spec_metadata.sh` script if not already run
+   - Run the `${CLAUDE_PLUGIN_ROOT}/scripts/spec_metadata.sh` script if not already run
    - Check the script output for "Normalized Username"
    - If present → use it
    - If not present:

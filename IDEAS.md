@@ -25,3 +25,5 @@
 
 *Extracted from LinkedIn post by Kasper Junge about 30 Minute Vibe Coding Challenge video ideas*
 
+## My Ideas
+- Podcast feed to summarized text news feed

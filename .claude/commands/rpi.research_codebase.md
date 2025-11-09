@@ -71,7 +71,7 @@ Then wait for the user's research query.
    - Answer the user's specific questions with concrete evidence
 
 5. **Gather metadata and determine research document location:**
-   - Run the `.claude/hack/spec_metadata.sh` script to generate all relevant metadata
+   - Run the `${CLAUDE_PLUGIN_ROOT}/scripts/spec_metadata.sh` script to generate all relevant metadata
    
    - **Determine username:**
      - Check the script output for "Normalized Username"
