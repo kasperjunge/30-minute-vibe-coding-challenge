@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Project Management - Travel Approval System{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+    <div class="sm:flex sm:items-center">
+        <div class="sm:flex-auto">
+            <h1 class="text-3xl font-semibold text-gray-900">Project Management</h1>
+            <p class="mt-2 text-sm text-gray-700">Manage projects and assign team leads for travel approval workflow</p>
+        </div>
+        <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+            <button type="button" onclick="showCreateForm()" class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">
+                New Project
+            </button>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    {% if request.query_params.get('success') %}
+    <div class="mt-4 rounded-md bg-green-50 p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="ml-3">
+                <p class="text-sm font-medium text-green-800">{{ request.query_params.get('success') }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if request.query_params.get('error') %}
+    <div class="mt-4 rounded-md bg-red-50 p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="ml-3">
+                <p class="text-sm font-medium text-red-800">{{ request.query_params.get('error') }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Create/Edit Form (Hidden by default) -->
+    <div id="project-form" class="hidden mt-6 bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 id="form-title" class="text-lg font-medium leading-6 text-gray-900">Create New Project</h3>
+            <form id="project-form-element" method="POST" class="mt-5 space-y-4">
+                <input type="hidden" id="project-id" name="project_id" value="">
+
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Project Name</label>
+                    <input type="text" name="name" id="name" required
+                           placeholder="e.g., Customer Portal Development"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border">
+                </div>
+
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea name="description" id="description" rows="3"
+                              placeholder="Brief description of the project"
+                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"></textarea>
+                </div>
+
+                <div>
+                    <label for="team_lead_id" class="block text-sm font-medium text-gray-700">Team Lead</label>
+                    <select name="team_lead_id" id="team_lead_id" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border">
+                        <option value="">Select a team lead...</option>
+                        {% for user in team_leads %}
+                        <option value="{{ user.id }}">{{ user.full_name }} ({{ user.role|replace('_', ' ')|title }})</option>
+                        {% endfor %}
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500">Only users with Team Lead or Manager role can be assigned</p>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="hideForm()"
+                            class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        Save Project
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Active Projects -->
+    <div class="mt-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Active Projects</h2>
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul role="list" class="divide-y divide-gray-200">
+                {% if active_projects %}
+                    {% for project in active_projects %}
+                    <li>
+                        <div class="px-4 py-4 sm:px-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center space-x-3">
+                                        <p class="text-sm font-medium text-indigo-600 truncate">
+                                            {{ project.name }}
+                                        </p>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            Active
+                                        </span>
+                                    </div>
+                                    {% if project.description %}
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        {{ project.description }}
+                                    </p>
+                                    {% endif %}
+                                    <div class="mt-2 flex items-center text-sm text-gray-500">
+                                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Team Lead: {{ project.team_lead.full_name }} ({{ project.team_lead.role|replace('_', ' ')|title }})</span>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-400">
+                                        Created: {{ project.created_at.strftime('%Y-%m-%d') }}
+                                    </p>
+                                </div>
+                                <div class="flex-shrink-0 flex space-x-2">
+                                    <button type="button" onclick="editProject({{ project.id }}, '{{ project.name }}', '{{ project.description or '' }}', {{ project.team_lead_id }})"
+                                            class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Edit
+                                    </button>
+                                    <form method="POST" action="/admin/projects/{{ project.id }}/deactivate" class="inline">
+                                        <button type="submit"
+                                                onclick="return confirm('Are you sure you want to deactivate this project? It will no longer appear in the travel request form and no new travel requests can be created for it.')"
+                                                class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            Deactivate
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="px-4 py-8 sm:px-6 text-center text-gray-500">
+                        No active projects found. Create one to get started.
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Inactive Projects -->
+    {% if inactive_projects %}
+    <div class="mt-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Inactive Projects</h2>
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul role="list" class="divide-y divide-gray-200">
+                {% for project in inactive_projects %}
+                <li>
+                    <div class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center space-x-3">
+                                    <p class="text-sm font-medium text-gray-600 truncate">
+                                        {{ project.name }}
+                                    </p>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        Inactive
+                                    </span>
+                                </div>
+                                {% if project.description %}
+                                <p class="mt-1 text-sm text-gray-500">
+                                    {{ project.description }}
+                                </p>
+                                {% endif %}
+                                <div class="mt-2 flex items-center text-sm text-gray-500">
+                                    <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Team Lead: {{ project.team_lead.full_name }}</span>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <span class="text-sm text-gray-500 italic">Cannot be reactivated</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function showCreateForm() {
+    document.getElementById('form-title').textContent = 'Create New Project';
+    document.getElementById('project-form-element').action = '/admin/projects';
+    document.getElementById('name').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('team_lead_id').value = '';
+    document.getElementById('project-id').value = '';
+    document.getElementById('project-form').classList.remove('hidden');
+    document.getElementById('name').focus();
+}
+
+function editProject(id, name, description, teamLeadId) {
+    document.getElementById('form-title').textContent = 'Edit Project';
+    document.getElementById('project-form-element').action = '/admin/projects/' + id;
+    document.getElementById('name').value = name;
+    document.getElementById('description').value = description;
+    document.getElementById('team_lead_id').value = teamLeadId;
+    document.getElementById('project-id').value = id;
+    document.getElementById('project-form').classList.remove('hidden');
+    document.getElementById('name').focus();
+}
+
+function hideForm() {
+    document.getElementById('project-form').classList.add('hidden');
+}
+</script>
+{% endblock %}

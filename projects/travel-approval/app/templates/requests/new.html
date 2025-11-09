@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}New Travel Request - Travel Approval System{% endblock %}
+
+{% block content %}
+<div class="px-4 py-6 sm:px-0">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+            <h2 class="text-2xl font-bold text-gray-900">New Travel Request</h2>
+            <p class="mt-1 text-sm text-gray-600">
+                Submit a new travel request for approval
+            </p>
+        </div>
+
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            {% if errors %}
+            <div class="mb-4 bg-red-50 border-l-4 border-red-400 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">There were errors with your submission:</h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                {% for field, error in errors.items() %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/requests/new" class="space-y-6">
+                <!-- Request Type -->
+                <div>
+                    <label class="text-base font-medium text-gray-900">Request Type</label>
+                    <p class="text-sm text-gray-500">Choose the type of travel request</p>
+                    <fieldset class="mt-4">
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <input id="request_type_operations" name="request_type" type="radio" value="operations"
+                                    {% if not form_data or form_data.request_type == 'operations' %}checked{% endif %}
+                                    class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                    onchange="toggleProjectDropdown()">
+                                <label for="request_type_operations" class="ml-3 block text-sm font-medium text-gray-700">
+                                    Operations Travel
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="request_type_project" name="request_type" type="radio" value="project"
+                                    {% if form_data and form_data.request_type == 'project' %}checked{% endif %}
+                                    class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                    onchange="toggleProjectDropdown()">
+                                <label for="request_type_project" class="ml-3 block text-sm font-medium text-gray-700">
+                                    Project Travel
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- Project Dropdown (conditional) -->
+                <div id="project_section" class="{% if not form_data or form_data.request_type != 'project' %}hidden{% endif %}">
+                    <label for="project_id" class="block text-sm font-medium text-gray-700">
+                        Project <span class="text-red-500">*</span>
+                    </label>
+                    <select id="project_id" name="project_id"
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="">Select a project</option>
+                        {% for project in projects %}
+                        <option value="{{ project.id }}" {% if form_data and form_data.project_id == project.id %}selected{% endif %}>
+                            {{ project.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Destination -->
+                <div>
+                    <label for="destination" class="block text-sm font-medium text-gray-700">
+                        Destination <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="destination" id="destination" required
+                        value="{% if form_data %}{{ form_data.destination }}{% endif %}"
+                        class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        placeholder="e.g., Berlin, Germany">
+                </div>
+
+                <!-- Date Range -->
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div>
+                        <label for="start_date" class="block text-sm font-medium text-gray-700">
+                            Start Date <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" name="start_date" id="start_date" required
+                            value="{% if form_data %}{{ form_data.start_date }}{% endif %}"
+                            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                    </div>
+
+                    <div>
+                        <label for="end_date" class="block text-sm font-medium text-gray-700">
+                            End Date <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" name="end_date" id="end_date" required
+                            value="{% if form_data %}{{ form_data.end_date }}{% endif %}"
+                            class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                    </div>
+                </div>
+
+                <!-- Purpose -->
+                <div>
+                    <label for="purpose" class="block text-sm font-medium text-gray-700">
+                        Purpose <span class="text-red-500">*</span>
+                    </label>
+                    <textarea name="purpose" id="purpose" rows="3" required
+                        class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        placeholder="Describe the purpose of this travel">{% if form_data %}{{ form_data.purpose }}{% endif %}</textarea>
+                </div>
+
+                <!-- Estimated Cost -->
+                <div>
+                    <label for="estimated_cost" class="block text-sm font-medium text-gray-700">
+                        Estimated Cost (DKK) <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="number" name="estimated_cost" id="estimated_cost" required step="0.01" min="0.01"
+                            value="{% if form_data %}{{ form_data.estimated_cost }}{% endif %}"
+                            class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-3 pr-12 sm:text-sm border-gray-300 rounded-md"
+                            placeholder="0.00">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">DKK</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- T-Account -->
+                <div>
+                    <label for="taccount_id" class="block text-sm font-medium text-gray-700">
+                        T-Account <span class="text-red-500">*</span>
+                    </label>
+                    <select id="taccount_id" name="taccount_id" required
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="">Select a T-account</option>
+                        {% for taccount in taccounts %}
+                        <option value="{{ taccount.id }}" {% if form_data and form_data.taccount_id == taccount.id %}selected{% endif %}>
+                            {{ taccount.account_code }} - {{ taccount.account_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end space-x-3">
+                    <a href="/dashboard"
+                        class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Submit Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleProjectDropdown() {
+        const projectRadio = document.getElementById('request_type_project');
+        const projectSection = document.getElementById('project_section');
+        const projectSelect = document.getElementById('project_id');
+
+        if (projectRadio.checked) {
+            projectSection.classList.remove('hidden');
+            projectSelect.required = true;
+        } else {
+            projectSection.classList.add('hidden');
+            projectSelect.required = false;
+            projectSelect.value = '';
+        }
+    }
+
+    // Run on page load to set initial state
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleProjectDropdown();
+    });
+</script>
+{% endblock %}

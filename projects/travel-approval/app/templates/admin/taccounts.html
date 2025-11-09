@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}T-Account Management - Travel Approval System{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+    <div class="sm:flex sm:items-center">
+        <div class="sm:flex-auto">
+            <h1 class="text-3xl font-semibold text-gray-900">T-Account Management</h1>
+            <p class="mt-2 text-sm text-gray-700">Manage budget accounts for travel expense tracking</p>
+        </div>
+        <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+            <button type="button" onclick="showCreateForm()" class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">
+                New T-Account
+            </button>
+        </div>
+    </div>
+
+    <!-- Create/Edit Form (Hidden by default) -->
+    <div id="taccount-form" class="hidden mt-6 bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 id="form-title" class="text-lg font-medium leading-6 text-gray-900">Create New T-Account</h3>
+            <form id="taccount-form-element" method="POST" class="mt-5 space-y-4">
+                <input type="hidden" id="form-method" name="_method" value="POST">
+                <input type="hidden" id="taccount-id" name="taccount_id" value="">
+
+                <div>
+                    <label for="account_code" class="block text-sm font-medium text-gray-700">Account Code</label>
+                    <input type="text" name="account_code" id="account_code" required
+                           placeholder="e.g., T-1234"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border">
+                </div>
+
+                <div>
+                    <label for="account_name" class="block text-sm font-medium text-gray-700">Account Name</label>
+                    <input type="text" name="account_name" id="account_name" required
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border">
+                </div>
+
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea name="description" id="description" rows="3"
+                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="hideForm()"
+                            class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        Save T-Account
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Active T-Accounts -->
+    <div class="mt-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Active T-Accounts</h2>
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul role="list" class="divide-y divide-gray-200">
+                {% set active_taccounts = taccounts|selectattr('is_active')|list %}
+                {% if active_taccounts %}
+                    {% for taccount in active_taccounts %}
+                    <li>
+                        <div class="px-4 py-4 sm:px-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center space-x-3">
+                                        <p class="text-sm font-medium text-indigo-600 truncate">
+                                            {{ taccount.account_code }}
+                                        </p>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            Active
+                                        </span>
+                                    </div>
+                                    <p class="mt-1 text-sm font-semibold text-gray-900">
+                                        {{ taccount.account_name }}
+                                    </p>
+                                    {% if taccount.description %}
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        {{ taccount.description }}
+                                    </p>
+                                    {% endif %}
+                                    <p class="mt-1 text-xs text-gray-400">
+                                        Created: {{ taccount.created_at.strftime('%Y-%m-%d') }}
+                                    </p>
+                                </div>
+                                <div class="flex-shrink-0 flex space-x-2">
+                                    <button type="button" onclick="editTAccount({{ taccount.id }}, '{{ taccount.account_code }}', '{{ taccount.account_name }}', '{{ taccount.description or '' }}')"
+                                            class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Edit
+                                    </button>
+                                    <form method="POST" action="/admin/taccounts/{{ taccount.id }}/deactivate" class="inline">
+                                        <button type="submit"
+                                                onclick="return confirm('Are you sure you want to deactivate this T-account? It will no longer appear in the travel request form.')"
+                                                class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            Deactivate
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="px-4 py-8 sm:px-6 text-center text-gray-500">
+                        No active T-accounts found. Create one to get started.
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Inactive T-Accounts -->
+    {% set inactive_taccounts = taccounts|rejectattr('is_active')|list %}
+    {% if inactive_taccounts %}
+    <div class="mt-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Inactive T-Accounts</h2>
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul role="list" class="divide-y divide-gray-200">
+                {% for taccount in inactive_taccounts %}
+                <li>
+                    <div class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center space-x-3">
+                                    <p class="text-sm font-medium text-gray-600 truncate">
+                                        {{ taccount.account_code }}
+                                    </p>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        Inactive
+                                    </span>
+                                </div>
+                                <p class="mt-1 text-sm font-semibold text-gray-700">
+                                    {{ taccount.account_name }}
+                                </p>
+                                {% if taccount.description %}
+                                <p class="mt-1 text-sm text-gray-500">
+                                    {{ taccount.description }}
+                                </p>
+                                {% endif %}
+                            </div>
+                            <div class="flex-shrink-0">
+                                <form method="POST" action="/admin/taccounts/{{ taccount.id }}/activate" class="inline">
+                                    <button type="submit"
+                                            class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Activate
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function showCreateForm() {
+    document.getElementById('form-title').textContent = 'Create New T-Account';
+    document.getElementById('taccount-form-element').action = '/admin/taccounts';
+    document.getElementById('account_code').value = '';
+    document.getElementById('account_name').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('taccount-id').value = '';
+    document.getElementById('taccount-form').classList.remove('hidden');
+    document.getElementById('account_code').focus();
+}
+
+function editTAccount(id, code, name, description) {
+    document.getElementById('form-title').textContent = 'Edit T-Account';
+    document.getElementById('taccount-form-element').action = '/admin/taccounts/' + id;
+    document.getElementById('account_code').value = code;
+    document.getElementById('account_name').value = name;
+    document.getElementById('description').value = description;
+    document.getElementById('taccount-id').value = id;
+    document.getElementById('taccount-form').classList.remove('hidden');
+    document.getElementById('account_code').focus();
+}
+
+function hideForm() {
+    document.getElementById('taccount-form').classList.add('hidden');
+}
+</script>
+{% endblock %}

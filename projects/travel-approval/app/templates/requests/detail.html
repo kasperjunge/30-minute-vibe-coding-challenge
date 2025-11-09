@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}Travel Request #{{ travel_request.id }} - Travel Approval System{% endblock %}
+
+{% block content %}
+<div class="px-4 py-6 sm:px-0">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <!-- Header -->
+        <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">Travel Request #{{ travel_request.id }}</h2>
+                <p class="mt-1 text-sm text-gray-600">
+                    Submitted on {{ travel_request.created_at.strftime('%B %d, %Y at %H:%M') }}
+                </p>
+            </div>
+            <div>
+                {% if travel_request.status == 'pending' %}
+                <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                    Pending
+                </span>
+                {% elif travel_request.status == 'approved' %}
+                <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    Approved
+                </span>
+                {% elif travel_request.status == 'rejected' %}
+                <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                    Rejected
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Details -->
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Requester</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ travel_request.requester.full_name }}</dd>
+                </div>
+
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Request Type</dt>
+                    <dd class="mt-1 text-sm text-gray-900 capitalize">{{ travel_request.request_type }}</dd>
+                </div>
+
+                {% if travel_request.project %}
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Project</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ travel_request.project.name }}</dd>
+                </div>
+                {% endif %}
+
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Destination</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ travel_request.destination }}</dd>
+                </div>
+
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Start Date</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ travel_request.start_date.strftime('%B %d, %Y') }}</dd>
+                </div>
+
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">End Date</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ travel_request.end_date.strftime('%B %d, %Y') }}</dd>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <dt class="text-sm font-medium text-gray-500">Purpose</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ travel_request.purpose }}</dd>
+                </div>
+
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Estimated Cost</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ "{:,.2f}".format(travel_request.estimated_cost) }} DKK</dd>
+                </div>
+
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">T-Account</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ travel_request.taccount.account_code }} - {{ travel_request.taccount.account_name }}</dd>
+                </div>
+
+                {% if travel_request.approver %}
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Approver</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ travel_request.approver.full_name }}</dd>
+                </div>
+                {% endif %}
+
+                {% if travel_request.approval_date %}
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">
+                        {% if travel_request.status == 'approved' %}Approval Date{% else %}Decision Date{% endif %}
+                    </dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ travel_request.approval_date.strftime('%B %d, %Y at %H:%M') }}</dd>
+                </div>
+                {% endif %}
+
+                {% if travel_request.approval_comments %}
+                <div class="sm:col-span-2">
+                    <dt class="text-sm font-medium text-gray-500">Approval Comments</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ travel_request.approval_comments }}</dd>
+                </div>
+                {% endif %}
+
+                {% if travel_request.rejection_reason %}
+                <div class="sm:col-span-2">
+                    <dt class="text-sm font-medium text-gray-500">Rejection Reason</dt>
+                    <dd class="mt-1 text-sm text-red-700">{{ travel_request.rejection_reason }}</dd>
+                </div>
+                {% endif %}
+            </dl>
+        </div>
+
+        <!-- Actions (for approvers only) -->
+        {% if travel_request.status == 'pending' and travel_request.approver_id == current_user.id %}
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6 bg-gray-50">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Approval Actions</h3>
+
+            {% if errors.rejection_reason %}
+            <div class="mb-4 bg-red-50 border border-red-200 rounded-md p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">{{ errors.rejection_reason }}</h3>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Comments/Reason Textarea -->
+            <div class="mb-4">
+                <label for="comments" class="block text-sm font-medium text-gray-700 mb-2">
+                    Comments / Reason
+                </label>
+                <textarea
+                    id="comments"
+                    name="comments"
+                    rows="4"
+                    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    placeholder="Add optional comments for approval, or required reason for rejection..."></textarea>
+                <p class="mt-1 text-xs text-gray-500">
+                    <span class="text-red-600">*</span> Required when rejecting. Optional when approving.
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex space-x-3">
+                <!-- Reject Form -->
+                <form method="POST" action="/requests/{{ travel_request.id }}/reject" onsubmit="return validateReject()" class="inline-block">
+                    <input type="hidden" name="reason" id="reject-reason">
+                    <button
+                        type="submit"
+                        class="inline-flex items-center px-4 py-2 border border-red-600 shadow-sm text-sm font-medium rounded-md text-red-600 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Reject
+                    </button>
+                </form>
+
+                <!-- Approve Form -->
+                <form method="POST" action="/requests/{{ travel_request.id }}/approve" class="inline-block">
+                    <input type="hidden" name="comments" id="approve-comments">
+                    <button
+                        type="submit"
+                        onclick="setApproveComments()"
+                        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Approve
+                    </button>
+                </form>
+            </div>
+
+            <script>
+                function setApproveComments() {
+                    const comments = document.getElementById('comments').value;
+                    document.getElementById('approve-comments').value = comments;
+                }
+
+                function validateReject() {
+                    const comments = document.getElementById('comments').value.trim();
+                    if (!comments) {
+                        alert('Please provide a reason for rejection.');
+                        return false;
+                    }
+                    document.getElementById('reject-reason').value = comments;
+                    return true;
+                }
+            </script>
+        </div>
+        {% endif %}
+
+        <!-- Back Button -->
+        <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
+            <a href="/dashboard"
+                class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

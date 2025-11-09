@@ -1,0 +1,59 @@
+/**
+ * Custom CSS for Travel Approval System
+ * Tailwind CSS is loaded via CDN, this file is for additional custom styles
+ */
+
+/* Smooth transitions for interactive elements */
+a, button {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Ensure form inputs have consistent styling */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+    border: 1px solid #d1d5db;
+    padding: 0.5rem 0.75rem;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Status badge colors */
+.status-pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.status-approved {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-rejected {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* Hide elements with .hidden class */
+.hidden {
+    display: none !important;
+}
+
+/* Ensure proper spacing for form elements */
+form .space-y-6 > * + * {
+    margin-top: 1.5rem;
+}
