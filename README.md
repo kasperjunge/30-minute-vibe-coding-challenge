@@ -1,125 +1,129 @@
-# 30 Minute Vibe Coding Challenge Projekter
+# 30 Minute Vibe Coding Challenge Projects
 
-Dette repository indeholder projekter skabt under **30 Minute Vibe Coding Challenge** på [Kasper Junges YouTube-kanal](https://www.youtube.com/@KasperJunge).
+This repository contains projects created during the **30 Minute Vibe Coding Challenge** on [Kasper Junge's YouTube channel](https://www.youtube.com/@KasperJunge).
 
-## Om Udfordringen
+## About the Challenge
 
-30 Minute Vibe Coding Challenge er en serie, hvor projekter bygges fra bunden på kun 30 minutter, der demonstrerer hurtig prototyping og AI-assisteret udviklingsteknikker.
+The 30 Minute Vibe Coding Challenge is a series where projects are built from scratch in just 30 minutes, demonstrating rapid prototyping and AI-assisted development techniques.
 
-## Sådan Virker Det
+Watch community challenge submissions on the [30-Minute Vibe Coding Challenge YouTube playlist](https://youtube.com/playlist?list=PLVA8AhrgYkh5a0rKQmx65Eczjpbiu-n0_&si=M0wrbkSFU6Ter9vJ).
 
-Dette repository tilbyder et simpelt script til at bootstrap nye projekter med prækonfigurerede kommandoskabeloner til AI-assistenter (Claude og Cursor).
+Want to participate or learn more? Visit [vibe-coding.dk](https://vibe-coding.dk/) - we're building an exciting community hub with tutorials, resources, and showcase projects from vibe coders around the world!
 
-### Struktur
+## How It Works
 
-- `context-engineering/` - Context engineering filer til AI-assistenter
-  - `commands/` - Template markdown filer der definerer AI-assistent kommandoer
-    - `sdd/` - Spec-Driven Development workflow (til greenfield projekter)
-    - `rpi/` - Research-Plan-Implement workflow (til eksisterende codebases)
-  - `rules/` - Tilpassede regler for AI-adfærd
-- `templates/` - Projekt skabeloner der kan bruges til at initialisere nye projekter
-- `projects/` - Her oprettes nye projekter
-- `cli.py` - CLI script til at oprette nye projekter
+This repository provides a simple script to bootstrap new projects with pre-configured command templates for AI assistants (Claude and Cursor).
 
-### AI-Assistent Workflows
+### Structure
 
-Dette projekt inkluderer to forskellige workflows til forskellige scenarier:
+- `context-engineering/` - Context engineering files for AI assistants
+  - `commands/` - Template markdown files that define AI assistant commands
+    - `sdd/` - Spec-Driven Development workflow (for greenfield projects)
+    - `rpi/` - Research-Plan-Implement workflow (for existing codebases)
+  - `rules/` - Custom rules for AI behavior
+- `templates/` - Project templates that can be used to initialize new projects
+- `projects/` - New projects are created here
+- `cli.py` - CLI script to create new projects
+
+### AI Assistant Workflows
+
+This project includes two different workflows for different scenarios:
 
 #### 🌱 Spec-Driven Development (SDD)
-**Hvornår:** Når du bygger nye projekter fra bunden (greenfield)
+**When:** When building new projects from scratch (greenfield)
 
-**Kommandoer:**
-1. `clarify_requirements.md` - Afklarer projektkrav gennem spørgsmål
-2. `clarify_design.md` - Afklarer teknisk design og arkitektur
-3. `create_plan.md` - Skaber detaljeret implementeringsplan
-4. `implement_plan.md` - Implementerer planen med tests
+**Commands:**
+1. `clarify_requirements.md` - Clarifies project requirements through questions
+2. `clarify_design.md` - Clarifies technical design and architecture
+3. `create_plan.md` - Creates detailed implementation plan
+4. `implement_plan.md` - Implements the plan with tests
 
 **Flow:** Requirements → Design → Plan → Implement
 
 #### 🔍 Research-Plan-Implement (RPI)
-**Hvornår:** Når du modificerer eller udvider eksisterende codebases (brownfield)
+**When:** When modifying or extending existing codebases (brownfield)
 
-**Kommandoer:**
-1. `research_codebase.md` - Undersøger og forstår eksisterende kodebase
-2. `create_plan.md` - Skaber plan for ændringer baseret på research
-3. `implement_plan.md` - Implementerer ændringerne
+**Commands:**
+1. `research_codebase.md` - Researches and understands existing codebase
+2. `create_plan.md` - Creates plan for changes based on research
+3. `implement_plan.md` - Implements the changes
 
 **Flow:** Research → Plan → Implement
 
-### Opsætning
+### Setup
 
-Installer først dependencies med `uv`:
+First install dependencies with `uv`:
 
 ```bash
 uv sync
 ```
 
-### Brug
+### Usage
 
-CLI'en tilbyder to hovedkommandoer:
+The CLI offers two main commands:
 
-**Opret et nyt projekt:**
-
-```bash
-uv run vibe new <projekt-navn>
-```
-
-**Opret et nyt projekt fra en skabelon:**
+**Create a new project:**
 
 ```bash
-uv run vibe new <projekt-navn> --template <skabelon-navn>
+uv run vibe new <project-name>
 ```
 
-**Vis tilgængelige skabeloner:**
+**Create a new project from a template:**
+
+```bash
+uv run vibe new <project-name> --template <template-name>
+```
+
+**Show available templates:**
 
 ```bash
 uv run vibe list
 ```
 
-**Yderligere muligheder:**
+**Additional options:**
 
 ```bash
-# Åbn ikke projektet i Cursor automatisk
-uv run vibe new <projekt-navn> --no-open
+# Don't open the project in Cursor automatically
+uv run vibe new <project-name> --no-open
 
-# Vis version
+# Show version
 uv run vibe --version
 
-# Vis hjælp
+# Show help
 uv run vibe --help
 ```
 
-Dette vil:
-1. Oprette en ny mappe under `projects/<projekt-navn>/`
-2. Kopiere skabelonfiler hvis `--template` er angivet
-3. Oprette `.claude/commands/` og `.cursor/commands/` undermapper
-4. Kopiere begge workflow sets (sdd + rpi) fra `context-engineering/commands/` til begge undermapper
-5. Åbne projektet i Cursor (medmindre `--no-open` er angivet)
+This will:
+1. Create a new folder under `projects/<project-name>/`
+2. Copy template files if `--template` is specified
+3. Create `.claude/commands/` and `.cursor/commands/` subfolders
+4. Copy both workflow sets (sdd + rpi) from `context-engineering/commands/` to both subfolders
+5. Open the project in Cursor (unless `--no-open` is specified)
 
-### Eksempler
+### Examples
 
-Opret et tomt projekt:
+Create an empty project:
 ```bash
-uv run vibe new min-fede-app
+uv run vibe new my-cool-app
 ```
 
-Opret et projekt fra FastAPI skabelonen:
+Create a project from the FastAPI template:
 ```bash
-uv run vibe new min-fede-app --template fastapi-sqlite-jinja2
+uv run vibe new my-cool-app --template fastapi-sqlite-jinja2
 ```
 
-Vis tilgængelige skabeloner:
+Show available templates:
 ```bash
 uv run vibe list
 ```
 
-Opret et projekt uden at åbne det i Cursor:
+Create a project without opening it in Cursor:
 ```bash
-uv run vibe new min-fede-app --no-open
+uv run vibe new my-cool-app --no-open
 ```
 
-### Tilgængelige Skabeloner
+### Available Templates
 
-- **fastapi-sqlite-jinja2** - FastAPI web app med SQLite database og Jinja2 templates
+- **fastapi-sqlite-jinja2** - FastAPI web app with SQLite database and Jinja2 templates
 
-Nu kan du starte din 30-minutters kodningsudfordring med AI-assistent kommandoer klar til brug! 🎵
+Now you can start your 30-minute coding challenge with AI assistant commands ready to use! 🎵

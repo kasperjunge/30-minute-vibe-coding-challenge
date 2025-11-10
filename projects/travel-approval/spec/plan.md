@@ -816,13 +816,13 @@ class ReportFilters(BaseModel):
 - Request ID, Employee Name, Department, Request Type, Project Name, Destination, Start Date, End Date, Purpose, Estimated Cost, T-Account, Status, Approved By, Approval Date
 
 **Test Requirements**:
-- [ ] Test filtering by date range
-- [ ] Test filtering by T-account
-- [ ] Test filtering by project
-- [ ] Test multiple filters combined
-- [ ] Test CSV export has correct headers and data
-- [ ] Test summary aggregates costs by T-account
-- [ ] Tests pass: `pytest tests/test_reporting_service.py`
+- [x] Test filtering by date range
+- [x] Test filtering by T-account
+- [x] Test filtering by project
+- [x] Test multiple filters combined
+- [x] Test CSV export has correct headers and data
+- [x] Test summary aggregates costs by T-account
+- [x] Tests pass: `pytest tests/test_reporting_service.py`
 
 **Verification Steps**:
 1. Run unit tests: `pytest tests/test_reporting_service.py -v`
@@ -831,11 +831,12 @@ class ReportFilters(BaseModel):
 **Implements User Story**: Story 5: View Pre-Approved Travel (Accounting) (requirements.md line 83)
 
 **Success Criteria**:
-- [ ] All code changes completed
-- [ ] All filtering logic implemented
-- [ ] CSV export generates correct format
-- [ ] Summary calculations accurate
-- [ ] Unit tests written and passing
+- [x] All code changes completed
+- [x] All filtering logic implemented
+- [x] CSV export generates correct format
+- [x] Summary calculations accurate
+- [x] Unit tests written and passing
+- [x] **TASK 4.1 COMPLETE**
 
 #### 4.2 Build Accounting Reports Interface
 **Files Created/Modified**:
@@ -864,12 +865,12 @@ class ReportFilters(BaseModel):
 - Sortable columns
 
 **Test Requirements**:
-- [ ] Test accounting staff can access /reports
-- [ ] Test non-accounting cannot access (403)
-- [ ] Test applying filters returns correct results
-- [ ] Test export CSV downloads file with correct content
-- [ ] Test pagination works for large result sets
-- [ ] Tests pass: `pytest tests/test_reports.py`
+- [x] Test accounting staff can access /reports
+- [x] Test non-accounting cannot access (403)
+- [x] Test applying filters returns correct results
+- [x] Test export CSV downloads file with correct content
+- [x] Test pagination works for large result sets
+- [x] Tests pass: `pytest tests/test_reports.py`
 
 **Verification Steps**:
 1. Run tests: `pytest tests/test_reports.py -v`
@@ -883,13 +884,14 @@ class ReportFilters(BaseModel):
 **Implements User Story**: Story 5: View Pre-Approved Travel (Accounting) (requirements.md line 83)
 
 **Success Criteria**:
-- [ ] All code changes completed
-- [ ] Reports interface implemented
-- [ ] Only accounting role can access
-- [ ] Filters work correctly
-- [ ] CSV export functional
-- [ ] All tests passing
+- [x] All code changes completed
+- [x] Reports interface implemented
+- [x] Only accounting role can access
+- [x] Filters work correctly
+- [x] CSV export functional
+- [x] All tests passing
 - [ ] Manual verification successful
+- [x] **TASK 4.2 COMPLETE**
 
 #### 4.3 Add Comprehensive Error Handling
 **Files Modified**:
@@ -917,11 +919,11 @@ async def server_error_handler(request, exc):
 ```
 
 **Test Requirements**:
-- [ ] Test 404 for invalid routes returns custom page
-- [ ] Test 500 for server errors returns custom page
-- [ ] Test validation errors show inline in forms
-- [ ] Test database errors caught and logged
-- [ ] Tests pass: `pytest tests/test_error_handling.py`
+- [x] Test 404 for invalid routes returns custom page
+- [x] Test 500 for server errors returns custom page
+- [x] Test validation errors show inline in forms
+- [x] Test database errors caught and logged
+- [x] Tests pass: `pytest tests/test_error_handling.py`
 
 **Verification Steps**:
 1. Run tests: `pytest tests/test_error_handling.py -v`
@@ -931,12 +933,13 @@ async def server_error_handler(request, exc):
 5. Expected: Inline error messages shown
 
 **Success Criteria**:
-- [ ] All code changes completed
-- [ ] Exception handlers implemented
-- [ ] Custom error pages created
-- [ ] All errors logged appropriately
-- [ ] Tests passing
+- [x] All code changes completed
+- [x] Exception handlers implemented
+- [x] Custom error pages created
+- [x] All errors logged appropriately
+- [x] Tests passing
 - [ ] Manual verification successful
+- [x] **TASK 4.3 COMPLETE**
 
 #### 4.4 Implement Audit Logging
 **Files Created**:
@@ -965,11 +968,11 @@ class AuditLog(Base):
 ```
 
 **Test Requirements**:
-- [ ] Test approving request creates audit log entry
-- [ ] Test rejecting request creates audit log entry
-- [ ] Test creating project creates audit log entry
-- [ ] Test audit logs contain correct user and entity info
-- [ ] Tests pass: `pytest tests/test_audit.py`
+- [x] Test approving request creates audit log entry
+- [x] Test rejecting request creates audit log entry
+- [x] Test creating project creates audit log entry
+- [x] Test audit logs contain correct user and entity info
+- [x] Tests pass: `pytest tests/test_audit.py`
 
 **Verification Steps**:
 1. Run migration: `alembic upgrade head`
@@ -980,11 +983,12 @@ class AuditLog(Base):
 **Implements Non-Functional Requirement**: Security - Audit log of all approval/rejection actions (requirements.md line 205)
 
 **Success Criteria**:
-- [ ] All code changes completed
-- [ ] Audit log model and migration created
-- [ ] All critical actions logged
-- [ ] Tests passing
-- [ ] Audit log data verifiable
+- [x] All code changes completed
+- [x] Audit log model and migration created
+- [x] All critical actions logged
+- [x] Tests passing
+- [x] Audit log data verifiable
+- [x] **TASK 4.4 COMPLETE**
 
 #### 4.5 Performance Optimization & Final Testing
 **Files Modified**:

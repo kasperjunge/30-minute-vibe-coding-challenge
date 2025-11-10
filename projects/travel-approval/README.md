@@ -1,6 +1,16 @@
 # Travel Approval System
 
-A web-based travel approval system built with FastAPI that streamlines pre-trip approval workflows.
+> **30-Minute Vibe Coding Challenge** - Built in just 30 minutes using AI-assisted development!
+
+A web-based travel approval system built with FastAPI that streamlines pre-trip approval workflows. This project was created as part of the [30-Minute Vibe Coding Challenge](https://vibe-coding.dk/) by Kasper Junge.
+
+## About the Challenge
+
+This project demonstrates what's possible with modern AI-assisted development in a very short timeframe. The challenge? Build a complete, functional application in just 30 minutes using Claude Code and custom workflow automation.
+
+Watch this and other challenge submissions on the [30-Minute Vibe Coding Challenge YouTube playlist](https://youtube.com/playlist?list=PLVA8AhrgYkh5a0rKQmx65Eczjpbiu-n0_&si=M0wrbkSFU6Ter9vJ).
+
+Want to participate? Visit [vibe-coding.dk](https://vibe-coding.dk/) to learn more about the challenge and join our growing community. We're building an exciting hub with tutorials, resources, and showcase projects from vibe coders around the world!
 
 ## Features
 
@@ -96,6 +106,71 @@ ruff check app/
 Once running, visit:
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
+
+## AI-Assisted Development Workflows
+
+This project includes custom Claude Code commands in the `.claude/` directory that enable rapid development through structured workflows. These commands were used to build this project in just 30 minutes!
+
+### Available Commands
+
+#### RPI (Research → Plan → Implement) Workflow
+
+The RPI workflow enables you to go from idea to implementation with AI assistance:
+
+1. **`/rpi.research_codebase`** - Research and document your codebase
+   - Documents the current state of the codebase
+   - Creates research documents with file references
+   - Perfect for understanding existing code before making changes
+
+2. **`/rpi.create_plan`** - Create detailed implementation plans
+   - Interactive planning process with thorough research
+   - Creates phased implementation plans with success criteria
+   - Generates plans in `tasks/<username>/NNN-YYYY-MM-DD-description/plan.md`
+
+3. **`/rpi.implement_plan`** - Execute the implementation plan
+   - Implements each phase systematically
+   - Verifies success criteria before moving forward
+   - Updates plan with checkmarks as work completes
+
+#### SDD (Specification-Driven Development) Workflow
+
+Alternative workflow for requirements-first development:
+
+- **`/sdd.create_requirements`** - Define detailed requirements
+- **`/sdd.clarify_requirements`** - Refine and clarify requirements
+- **`/sdd.create_design`** - Create technical design documents
+- **`/sdd.clarify_design`** - Iterate on the design
+- **`/sdd.create_plan`** - Generate implementation plan from design
+- **`/sdd.implement_plan`** - Execute the implementation
+
+### Example Usage
+
+```bash
+# Start a new feature
+/rpi.research_codebase
+# Ask: "How does the approval workflow work?"
+
+# Create a plan based on your research
+/rpi.create_plan
+# Provide requirements or reference a task file
+
+# Implement the plan
+/rpi.implement_plan tasks/kasper-junge/001-2025-01-15-new-feature/plan.md
+```
+
+### Custom Agents
+
+The `.claude/agents/` directory contains specialized research agents:
+- **codebase-locator** - Finds files and components
+- **codebase-analyzer** - Analyzes implementation details
+- **codebase-pattern-finder** - Finds similar implementations
+- **web-search-researcher** - Researches documentation and best practices
+
+These agents work together to enable rapid, thorough development in minimal time.
+
+## Project Structure
+
+See `spec/plan.md` for the complete implementation plan that was followed to build this application, including all phases, tasks, and success criteria.
 
 ## License
 

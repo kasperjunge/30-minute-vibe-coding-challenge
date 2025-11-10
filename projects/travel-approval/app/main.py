@@ -111,8 +111,12 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     elif exc.status_code == 500:
         return await server_error_handler(request, exc)
 
-    # For other HTTP exceptions, re-raise to let FastAPI handle them
-    raise exc
+    # For other HTTP exceptions, return JSON response
+    from fastapi.responses import JSONResponse
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
 
 
 @app.exception_handler(Exception)
