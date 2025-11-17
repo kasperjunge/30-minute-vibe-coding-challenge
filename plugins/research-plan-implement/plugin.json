@@ -1,0 +1,10 @@
+{
+  "name": "research-plan-implement",
+  "source": "./plugins/research-plan-implement",
+  "description": "Advanced context engineering workflow plugin based on HumanLayer's ACE methodology for codebase research, planning, and implementation",
+  "version": "1.0.0",
+  "author": {
+    "name": "Kasper Junge",
+    "url": "https://github.com/kasperjunge"
+  }
+}

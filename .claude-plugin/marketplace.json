@@ -1,0 +1,34 @@
+{
+  "name": "30-minute-vibe-coding-challenge",
+  "owner": {
+    "name": "Kasper Junge",
+    "url": "https://github.com/kasperjunge"
+  },
+  "metadata": {
+    "description": "The official 30 Minute Vibe Coding Challenge plugin marketplace",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "spec-driven-development",
+      "source": "./plugins/spec-driven-development",
+      "description": "Spec-driven development workflow commands",
+      "version": "1.1.0",
+      "author": {
+        "name": "Kasper Junge",
+        "url": "https://github.com/kasperjunge"
+      }
+    },
+    {
+      "name": "research-plan-implement",
+      "source": "./plugins/research-plan-implement",
+      "description": "Advanced context engineering workflow plugin based on HumanLayer's ACE methodology for codebase research, planning, and implementation",
+      "version": "1.0.0",
+      "author": {
+        "name": "Kasper Junge",
+        "url": "https://github.com/kasperjunge"
+      }
+    }
+  ]
+}
+
