@@ -1,0 +1,9 @@
+{
+  "name": "opportunity-solution-tree",
+  "description": "Opportunity Solution Tree framework for pre-PMF startups to guide product discovery, problem validation, and solution prioritization",
+  "version": "1.0.0",
+  "author": {
+    "name": "Kasper Junge",
+    "url": "https://github.com/kasperjunge"
+  }
+}
