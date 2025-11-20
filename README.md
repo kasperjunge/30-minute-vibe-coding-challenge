@@ -1,6 +1,6 @@
-# 30 Minute Vibe Coding Challenge Projects
+# 30 Minute Vibe Coding Challenge
 
-This repository contains projects created during the **30 Minute Vibe Coding Challenge** on [Kasper Junge's YouTube channel](https://www.youtube.com/@KasperJunge).
+This repository contains a curated **plugin marketplace** for Claude Code, along with project templates and resources from [Kasper Junge's YouTube channel](https://www.youtube.com/@KasperJunge).
 
 ## About the Challenge
 
@@ -10,45 +10,117 @@ Watch community challenge submissions on the [30-Minute Vibe Coding Challenge Yo
 
 Want to participate or learn more? Visit [vibe-coding.dk](https://vibe-coding.dk/) - we're building an exciting community hub with tutorials, resources, and showcase projects from vibe coders around the world!
 
-## How It Works
+## Plugin Marketplace
 
-This repository provides a simple script to bootstrap new projects with pre-configured command templates for AI assistants (Claude and Cursor).
+This repository hosts a collection of Claude Code plugins that enhance your AI-assisted development workflow. All plugins are designed to work seamlessly with Claude Code.
 
-### Structure
+### Repository Structure
 
-- `context-engineering/` - Context engineering files for AI assistants
-  - `commands/` - Template markdown files that define AI assistant commands
-    - `sdd/` - Spec-Driven Development workflow (for greenfield projects)
-    - `rpi/` - Research-Plan-Implement workflow (for existing codebases)
-  - `rules/` - Custom rules for AI behavior
-- `templates/` - Project templates that can be used to initialize new projects
-- `projects/` - New projects are created here
-- `cli.py` - CLI script to create new projects
+- `plugins/` - Claude Code plugin marketplace
+  - `spec-driven-development/` - Specification-first workflow for greenfield projects
+  - `research-plan-implement/` - Research-driven workflow for existing codebases
+  - `clarification/` - Task clarification through structured questions
+  - And more...
+- `templates/` - Project templates for quick bootstrapping
+- `projects/` - Example projects and sandbox
+- `cli.py` - CLI tool for project management
 
-### AI Assistant Workflows
+### Available Plugins
 
-This project includes two different workflows for different scenarios:
+#### Spec-Driven Development (SDD)
+**Best for:** Starting new projects from scratch (greenfield)
 
-#### 🌱 Spec-Driven Development (SDD)
-**When:** When building new projects from scratch (greenfield)
+A comprehensive workflow plugin that follows a specification-first approach with six commands:
+
+**Quick Mode (when you have a clear vision):**
+- `/sdd.create_requirements` - Generate requirements from brief description
+- `/sdd.create_design` - Generate design with tech stack preferences
+
+**Thorough Mode (when you want guided exploration):**
+- `/sdd.clarify_requirements` - Interactive requirements clarification through questions
+- `/sdd.clarify_design` - Interactive design clarification
+
+**Shared Commands:**
+- `/sdd.create_plan` - Generate detailed implementation plan (UI-first when applicable)
+- `/sdd.implement_plan` - Execute the plan with rigorous testing
+
+**Workflow:** Requirements → Design → Plan → Implement
+
+**Key Features:**
+- Choose between quick and thorough modes
+- UI-first planning for projects with interfaces
+- Rigorous testing with max 3 attempts per task
+- Phase-by-phase execution with human review points
+- Complete spec documentation
+
+[Read full documentation →](plugins/spec-driven-development/README.md)
+
+#### Research-Plan-Implement (RPI)
+**Best for:** Modifying or extending existing codebases (brownfield)
+
+A comprehensive workflow plugin with specialized research agents and structured execution:
+
+**Research Agents:**
+- `@codebase-analyzer` - Analyze implementation details
+- `@codebase-locator` - Find relevant files and components
+- `@codebase-pattern-finder` - Discover existing patterns
+- `@web-search-researcher` - Research documentation and best practices
 
 **Commands:**
-1. `clarify_requirements.md` - Clarifies project requirements through questions
-2. `clarify_design.md` - Clarifies technical design and architecture
-3. `create_plan.md` - Creates detailed implementation plan
-4. `implement_plan.md` - Implements the plan with tests
+- `/humanlayer.research_codebase` - Comprehensive codebase research
+- `/humanlayer.create_plan` - Interactive implementation planning
+- `/humanlayer.implement_plan` - Execute plans with verification
 
-**Flow:** Requirements → Design → Plan → Implement
+**Workflow:** Research → Plan → Implement
 
-#### 🔍 Research-Plan-Implement (RPI)
-**When:** When modifying or extending existing codebases (brownfield)
+**Key Features:**
+- Parallel sub-agents for deep codebase analysis
+- Documentation-first philosophy (what EXISTS, not what SHOULD BE)
+- Structured task directory system
+- Automated and manual verification steps
+- Based on [Advanced Context Engineering](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/ace-fca.md) by Dexter Horthy
+
+[Read full documentation →](plugins/research-plan-implement/README.md)
+
+#### Clarification
+**Best for:** Understanding requirements before starting any task
+
+A lightweight plugin that helps clarify tasks through structured questioning:
 
 **Commands:**
-1. `research_codebase.md` - Researches and understands existing codebase
-2. `create_plan.md` - Creates plan for changes based on research
-3. `implement_plan.md` - Implements the changes
+- `/clarify_task` - Interactive clarification session
 
-**Flow:** Research → Plan → Implement
+**Key Features:**
+- Systematic questioning process
+- Uncover core objectives and edge cases
+- Define success criteria and scope boundaries
+- Document understanding before implementation
+
+[Read full documentation →](plugins/clarification/README.md)
+
+### Installing Plugins
+
+Each plugin includes installation instructions in its README. Generally, you can install plugins using:
+
+```bash
+/plugin install <plugin-name>@30-minute-vibe-coding-challenge
+```
+
+Or browse plugins directly in the `plugins/` directory and review their documentation.
+
+## Project Templates
+
+This repository includes starter templates to quickly bootstrap common project types.
+
+### Available Templates
+
+- **fastapi-sqlite-jinja2** - FastAPI web app with SQLite database and Jinja2 templates
+
+More templates coming soon!
+
+## CLI Tool (Optional)
+
+The repository includes a CLI tool for managing projects in the `projects/` directory. This is optional and mainly used for development and examples.
 
 ### Setup
 
@@ -58,9 +130,7 @@ First install dependencies with `uv`:
 uv sync
 ```
 
-### Usage
-
-The CLI offers two main commands:
+### CLI Usage
 
 **Create a new project:**
 
@@ -80,10 +150,16 @@ uv run vibe new <project-name> --template <template-name>
 uv run vibe list
 ```
 
+**Open an existing project:**
+
+```bash
+uv run vibe open <project-name>
+```
+
 **Additional options:**
 
 ```bash
-# Don't open the project in Cursor automatically
+# Don't open the project automatically
 uv run vibe new <project-name> --no-open
 
 # Show version
@@ -93,37 +169,35 @@ uv run vibe --version
 uv run vibe --help
 ```
 
-This will:
-1. Create a new folder under `projects/<project-name>/`
-2. Copy template files if `--template` is specified
-3. Create `.claude/commands/` and `.cursor/commands/` subfolders
-4. Copy both workflow sets (sdd + rpi) from `context-engineering/commands/` to both subfolders
-5. Open the project in Cursor (unless `--no-open` is specified)
-
 ### Examples
 
-Create an empty project:
 ```bash
+# Create an empty project
 uv run vibe new my-cool-app
-```
 
-Create a project from the FastAPI template:
-```bash
-uv run vibe new my-cool-app --template fastapi-sqlite-jinja2
-```
+# Create a project from a template
+uv run vibe new my-api --template fastapi-sqlite-jinja2
 
-Show available templates:
-```bash
+# List available templates
 uv run vibe list
+
+# Open an existing project
+uv run vibe open my-cool-app
 ```
 
-Create a project without opening it in Cursor:
-```bash
-uv run vibe new my-cool-app --no-open
-```
+## Contributing
 
-### Available Templates
+Have a plugin or template to share? We welcome contributions!
 
-- **fastapi-sqlite-jinja2** - FastAPI web app with SQLite database and Jinja2 templates
+1. Fork the repository
+2. Add your plugin to `plugins/` or template to `templates/`
+3. Include a comprehensive README
+4. Submit a pull request
 
-Now you can start your 30-minute coding challenge with AI assistant commands ready to use! 🎵
+## Community
+
+Join the vibe coding community at [vibe-coding.dk](https://vibe-coding.dk/) to share your projects, learn from others, and participate in challenges!
+
+## License
+
+MIT License - feel free to use these plugins and templates in your own projects.
