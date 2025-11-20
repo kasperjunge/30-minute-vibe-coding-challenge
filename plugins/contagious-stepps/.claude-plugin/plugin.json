@@ -1,0 +1,9 @@
+{
+  "name": "contagious-stepps",
+  "description": "Jonah Berger's STEPPS framework for analyzing and enhancing viral potential of products, ideas, and campaigns",
+  "version": "1.0.0",
+  "author": {
+    "name": "Kasper Junge",
+    "url": "https://github.com/kasperjunge"
+  }
+}
