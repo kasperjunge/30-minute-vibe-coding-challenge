@@ -28,6 +28,36 @@
         "name": "Kasper Junge",
         "url": "https://github.com/kasperjunge"
       }
+    },
+    {
+      "name": "clarification",
+      "source": "./plugins/clarification",
+      "description": "A lightweight plugin for clarifying tasks and requirements through structured questions",
+      "version": "1.0.0",
+      "author": {
+        "name": "Kasper Junge",
+        "url": "https://github.com/kasperjunge"
+      }
+    },
+    {
+      "name": "contagious-stepps",
+      "source": "./plugins/contagious-stepps",
+      "description": "Jonah Berger's STEPPS framework for analyzing and enhancing viral potential of products, ideas, and campaigns",
+      "version": "1.0.0",
+      "author": {
+        "name": "Kasper Junge",
+        "url": "https://github.com/kasperjunge"
+      }
+    },
+    {
+      "name": "opportunity-solution-tree",
+      "source": "./plugins/opportunity-solution-tree",
+      "description": "Opportunity Solution Tree framework for pre-PMF startups to guide product discovery, problem validation, and solution prioritization",
+      "version": "1.0.0",
+      "author": {
+        "name": "Kasper Junge",
+        "url": "https://github.com/kasperjunge"
+      }
     }
   ]
 }
